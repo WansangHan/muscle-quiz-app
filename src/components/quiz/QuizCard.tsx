@@ -1,0 +1,135 @@
+import React, { useState } from 'react';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
+import { QuizCard as QuizCardType } from '../../types/quiz';
+import { HintButton } from './HintButton';
+import { Colors } from '../../constants/colors';
+import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
+
+interface Props {
+  card: QuizCardType;
+  hintLevel: number;
+  isClose: boolean;
+  onSubmit: (answer: string) => void;
+  onHint: () => void;
+}
+
+export function QuizCardComponent({ card, hintLevel, isClose, onSubmit, onHint }: Props) {
+  const [input, setInput] = useState('');
+
+  const handleSubmit = () => {
+    if (!input.trim()) return;
+    Keyboard.dismiss();
+    onSubmit(input.trim());
+    setInput('');
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image source={card.muscle.imageAsset} style={styles.image} resizeMode="contain" />
+        <Text style={styles.regionBadge}>
+          {card.muscle.bodyRegion}
+        </Text>
+      </View>
+
+      <Text style={styles.prompt}>이 근육의 이름은?</Text>
+
+      {isClose && (
+        <Text style={styles.closeText}>거의 맞았어요! 다시 시도해보세요.</Text>
+      )}
+
+      <TextInput
+        style={styles.input}
+        value={input}
+        onChangeText={setInput}
+        placeholder="근육 이름을 입력하세요"
+        placeholderTextColor={Colors.textLight}
+        autoCapitalize="none"
+        autoCorrect={false}
+        returnKeyType="done"
+        onSubmitEditing={handleSubmit}
+      />
+
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitText}>확인</Text>
+      </TouchableOpacity>
+
+      <HintButton
+        hintLevel={hintLevel}
+        hintTexts={card.hintTexts[0]}
+        onPress={onHint}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  imageContainer: {
+    width: '100%',
+    height: 220,
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  image: {
+    width: '80%',
+    height: '80%',
+  },
+  regionBadge: {
+    position: 'absolute',
+    top: Spacing.sm,
+    right: Spacing.sm,
+    backgroundColor: Colors.primary,
+    color: '#fff',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+    fontSize: FontSize.xs,
+    fontWeight: '600',
+    overflow: 'hidden',
+  },
+  prompt: {
+    fontSize: FontSize.lg,
+    fontWeight: '600',
+    color: Colors.text,
+    marginBottom: Spacing.md,
+  },
+  closeText: {
+    fontSize: FontSize.sm,
+    color: Colors.warning,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
+  input: {
+    width: '100%',
+    borderWidth: 2,
+    borderColor: Colors.border,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    fontSize: FontSize.lg,
+    textAlign: 'center',
+    backgroundColor: Colors.surface,
+    marginBottom: Spacing.md,
+  },
+  submitButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xxl,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.md,
+  },
+  submitText: {
+    color: '#fff',
+    fontSize: FontSize.lg,
+    fontWeight: '700',
+  },
+});
