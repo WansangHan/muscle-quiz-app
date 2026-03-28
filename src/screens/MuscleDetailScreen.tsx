@@ -31,8 +31,8 @@ export function MuscleDetailScreen() {
         </View>
 
         <View style={styles.nameCard}>
-          <NameRow label="일반명" value={muscle.names.koreanCommon} />
-          <NameRow label="해부학 용어" value={muscle.names.koreanAnatomical} />
+          <NameRow label="근육명" value={muscle.names.koreanAnatomical} />
+          <NameRow label="현대 해부학 용어" value={muscle.names.koreanCommon} />
           <NameRow label="영문/라틴" value={muscle.names.latinEnglish} />
         </View>
 
@@ -60,7 +60,7 @@ export function MuscleDetailScreen() {
             <Text style={styles.sectionTitle}>관련 근육</Text>
             {relatedMuscles.map((m) => m && (
               <Text key={m.id} style={styles.relatedName}>
-                {m.names.koreanCommon} ({m.names.koreanAnatomical})
+                {m.names.koreanAnatomical}({m.names.koreanCommon})
               </Text>
             ))}
           </View>

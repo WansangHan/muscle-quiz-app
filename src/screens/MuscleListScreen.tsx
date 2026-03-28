@@ -27,8 +27,8 @@ export function MuscleListScreen() {
             onPress={() => navigation.navigate('MuscleDetail', { muscleId: item.id })}
           >
             <View>
-              <Text style={styles.nameCommon}>{item.names.koreanCommon}</Text>
-              <Text style={styles.nameAnatomical}>{item.names.koreanAnatomical}</Text>
+              <Text style={styles.nameCommon}>{item.names.koreanAnatomical}</Text>
+              <Text style={styles.nameAnatomical}>{item.names.koreanCommon}</Text>
             </View>
             <Text style={styles.nameLatin}>{item.names.latinEnglish}</Text>
           </TouchableOpacity>

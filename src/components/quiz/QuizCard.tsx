@@ -4,8 +4,9 @@ import { QuizCard as QuizCardType } from '../../types/quiz';
 import { HintButton } from './HintButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
+import { BODY_REGION_LABELS } from '../../data/muscles';
 
-const ANSWER_LABELS = ['일반명', '해부학 용어', '영문/라틴'];
+const ANSWER_LABELS = ['근육명', '영문/라틴'];
 
 interface Props {
   card: QuizCardType;
@@ -35,7 +36,7 @@ export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, total
       <View style={styles.imageContainer}>
         <Image source={card.muscle.imageAsset} style={styles.image} resizeMode="contain" />
         <Text style={styles.regionBadge}>
-          {card.muscle.bodyRegion}
+          {BODY_REGION_LABELS[card.muscle.bodyRegion] ?? card.muscle.bodyRegion}
         </Text>
       </View>
 

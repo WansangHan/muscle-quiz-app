@@ -27,21 +27,15 @@ function buildQuizCard(muscleId: string, difficulty: Difficulty = 'beginner'): Q
   let requiredAnswers: string[];
   switch (difficulty) {
     case 'advanced':
+    case 'intermediate':
       requiredAnswers = [
-        muscle.names.koreanCommon,
         muscle.names.koreanAnatomical,
         muscle.names.latinEnglish,
       ];
       break;
-    case 'intermediate':
-      requiredAnswers = [
-        muscle.names.koreanCommon,
-        muscle.names.koreanAnatomical,
-      ];
-      break;
     case 'beginner':
     default:
-      requiredAnswers = [muscle.names.koreanCommon];
+      requiredAnswers = [muscle.names.koreanAnatomical];
       break;
   }
 
