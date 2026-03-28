@@ -1,5 +1,5 @@
 {
-  "sources": [
+  "globalSources": [
     {
       "name": "Servier Medical Art",
       "url": "https://smart.servier.com",
@@ -15,5 +15,651 @@
       "note": "3D model reference for custom renderings"
     }
   ],
-  "placeholder": "Current images are placeholder graphics. Replace with properly attributed anatomical illustrations before release."
+  "images": {
+    "tensor_fasciae_latae": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Tensor-fasciae-latae.png",
+      "author": "colorized by Michael Gasperl",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tensor-fasciae-latae.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "piriformis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Piriformis large.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Piriformis_large.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "rectus_femoris": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Rectus femoris 3D.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rectus_femoris_3D.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "vastus_lateralis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Vastus lateralis.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vastus_lateralis.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "vastus_medialis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Vastus medialis.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vastus_medialis.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "vastus_intermedius": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Vastus intermedialis.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vastus_intermedialis.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "biceps_femoris": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Biceps femoris.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Biceps_femoris.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "semitendinosus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Semitendinosus.png",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Semitendinosus.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "semimembranosus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Semimembranosus.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Semimembranosus.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "adductor_magnus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Adductor magnus.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Adductor_magnus.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "adductor_longus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Adductor longus.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Adductor_longus.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "gracilis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Gracilis.gif",
+      "author": "BodyParts3D/Anatomography",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gracilis.gif",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "gastrocnemius": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Gastrocnemius muscle - posterior view.png",
+      "author": "Database Center for Life Science (DBCLS)/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gastrocnemius_muscle_-_posterior_view.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "soleus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Soleus muscle - posterior view.png",
+      "author": "Database Center for Life Science (DBCLS)/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Soleus_muscle_-_posterior_view.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "tibialis_anterior": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Tibialis anterior muscle - anteriror view.png",
+      "author": "Database Center for Life Science (DBCLS)/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tibialis_anterior_muscle_-_anteriror_view.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "sternocleidomastoid": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Sternomastoid muscle frontal.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sternomastoid_muscle_frontal.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "scalenes": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Scalenus anterior01.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Scalenus_anterior01.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "diaphragm": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Human diaphragm.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Human_diaphragm.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "pectoralis_major": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Pectoralis Major.png",
+      "author": "DrJanaOfficial",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pectoralis_Major.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "pectoralis_minor": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Pectoralis minor muscle frontal.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pectoralis_minor_muscle_frontal.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "serratus_anterior": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Serratus anterior muscles frontal.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Serratus_anterior_muscles_frontal.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "trapezius": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Trapezius back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Trapezius_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "latissimus_dorsi": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Latissimus dorsi muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Latissimus_dorsi_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "rhomboid_major": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Rhomboid major muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rhomboid_major_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "rhomboid_minor": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Rhomboid minor muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rhomboid_minor_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "levator_scapulae": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Levator scapulae muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Levator_scapulae_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "pronator_teres": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:PronatorTeresArrangement.jpg",
+      "author": "Frederic H. Gerrish",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PronatorTeresArrangement.jpg",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "external_oblique": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Grays Anatomy Muscle oblique externe.png",
+      "author": "Henry Vandyke Carter",
+      "license": "CC0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Grays_Anatomy_Muscle_oblique_externe.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "transversus_abdominis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Transversus abdominis.png",
+      "author": "Modified by Uwe Gille (based on Gray397.png)",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Transversus_abdominis.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "gluteus_maximus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Gerrish's Text-book of Anatomy (1902) - Fig. 349.png",
+      "author": "Frederick Henry Gerrish",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gerrish%27s_Text-book_of_Anatomy_(1902)_-_Fig._349.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "gluteus_medius": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Gerrish's Text-book of Anatomy (1902) - Fig. 352.png",
+      "author": "Frederick Henry Gerrish",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gerrish%27s_Text-book_of_Anatomy_(1902)_-_Fig._352.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "gluteus_minimus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Gerrish's Text-book of Anatomy (1902) - Fig. 354.png",
+      "author": "Frederick Henry Gerrish",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gerrish%27s_Text-book_of_Anatomy_(1902)_-_Fig._354.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "deltoid": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Deltoid muscle frontal.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Deltoid_muscle_frontal.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "supraspinatus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Supraspinatus muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Supraspinatus_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "infraspinatus": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Infraspinatus muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Infraspinatus_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "teres_major": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Teres major muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Teres_major_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "teres_minor": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Teres minor muscle back.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Teres_minor_muscle_back.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "biceps_brachii": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Biceps brachii muscle06.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Biceps_brachii_muscle06.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "triceps_brachii": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Triceps brachii muscle06.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Triceps_brachii_muscle06.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "brachialis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Brachialis muscle02.png",
+      "author": "Anatomography/BodyParts3D",
+      "license": "CC BY-SA 2.1 jp",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brachialis_muscle02.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "erector_spinae": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Gray389 - Erector spinae.png",
+      "author": "Henry Vandyke Carter",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gray389_-_Erector_spinae.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "brachioradialis": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:Brachioradialis.png",
+      "author": "Henry Vandyke Carter",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Brachioradialis.png",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": false,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    },
+    "wrist_flexors": {
+      "source": "Wikimedia Commons",
+      "fileName": "File:SuperficialMusclesOfAnteriorForearm.jpg",
+      "author": "Jones Quain",
+      "license": "Public domain",
+      "licenseUrl": "https://en.wikipedia.org/wiki/Public_domain",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:SuperficialMusclesOfAnteriorForearm.jpg",
+      "verified": true,
+      "verifiedDate": "2026-03-29",
+      "checks": {
+        "noTextLabels": true,
+        "muscleIdentifiable": true,
+        "licenseValid": true
+      }
+    }
+  }
 }
