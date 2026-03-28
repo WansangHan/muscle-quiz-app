@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
 import { QuizCard as QuizCardType } from '../../types/quiz';
 import { HintButton } from './HintButton';
@@ -19,6 +19,9 @@ interface Props {
 
 export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, totalAnswers, onSubmit, onHint }: Props) {
   const [input, setInput] = useState('');
+
+  // Clear input when card or answer index changes
+  useEffect(() => { setInput(''); }, [card.muscle.id, answerIndex]);
 
   const handleSubmit = () => {
     if (!input.trim()) return;

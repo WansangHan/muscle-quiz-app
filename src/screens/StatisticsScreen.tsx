@@ -39,6 +39,7 @@ export function StatisticsScreen() {
   const loadStats = async () => {
     const progress = await getAllProgress();
     const progressMap = new Map(progress.map((p) => [p.muscleId, p]));
+    const muscleMap = new Map(MUSCLES.map((m) => [m.id, m]));
 
     // Overall
     const unlocked = progress.filter((p) => p.isUnlocked);
@@ -84,12 +85,12 @@ export function StatisticsScreen() {
     const weak: WeakMuscle[] = [];
     for (const p of progress) {
       if (p.totalReviews >= 1) {
-        const muscle = MUSCLES.find((m) => m.id === p.muscleId);
+        const muscle = muscleMap.get(p.muscleId);
         if (muscle) {
           weak.push({
             id: p.muscleId,
             name: muscle.names.koreanCommon,
-            correctRate: p.totalReviews > 0 ? p.totalCorrect / p.totalReviews : 0,
+            correctRate: p.totalCorrect / p.totalReviews,
             totalReviews: p.totalReviews,
           });
         }

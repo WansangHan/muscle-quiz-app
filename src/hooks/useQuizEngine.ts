@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { QuizCard, QuizState, AnswerResult, QuizSessionSummary } from '../types/quiz';
 import { checkAnswer } from '../lib/answerChecker';
 import { calculateNextReview } from '../lib/sm2';
@@ -14,9 +14,8 @@ interface QuizEngineState {
   cards: QuizCard[];
   results: AnswerResult[];
   currentHintLevel: number;
-  currentAnswerIndex: number; // which answer within the card (for multi-answer)
+  currentAnswerIndex: number;
   isClose: boolean;
-  sessionId: number | null;
 }
 
 export function useQuizEngine(initialCards: QuizCard[]) {
@@ -28,27 +27,52 @@ export function useQuizEngine(initialCards: QuizCard[]) {
     currentHintLevel: 0,
     currentAnswerIndex: 0,
     isClose: false,
-    sessionId: null,
   });
 
   const cardStartTime = useRef<number>(Date.now());
   const sessionIdRef = useRef<number | null>(null);
   const cardCorrectAll = useRef<boolean>(true);
+  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const initSession = useCallback(async () => {
-    if (sessionIdRef.current !== null) return;
-    const id = await createSession('beginner');
-    sessionIdRef.current = id;
-    setEngine((prev) => ({ ...prev, sessionId: id }));
-  }, []);
-
-  if (sessionIdRef.current === null && initialCards.length > 0) {
-    initSession();
-  }
+  // Init session in effect, not during render
+  useEffect(() => {
+    if (sessionIdRef.current === null && initialCards.length > 0) {
+      createSession('beginner').then((id) => {
+        sessionIdRef.current = id;
+      });
+    }
+    return () => {
+      if (feedbackTimerRef.current) clearTimeout(feedbackTimerRef.current);
+    };
+  }, [initialCards]);
 
   const currentCard = engine.cards[engine.currentIndex] ?? null;
   const currentRequiredAnswer = currentCard?.requiredAnswers[engine.currentAnswerIndex] ?? null;
   const totalAnswersForCard = currentCard?.requiredAnswers.length ?? 1;
+
+  const advanceToNext = useCallback(() => {
+    cardCorrectAll.current = true;
+    cardStartTime.current = Date.now();
+    setEngine((prev) => {
+      const nextIndex = prev.currentIndex + 1;
+      if (nextIndex >= prev.cards.length) {
+        if (sessionIdRef.current) {
+          const correct = prev.results.filter((r) => r.isCorrect).length;
+          const wrong = prev.results.length - correct;
+          finishSession(sessionIdRef.current, prev.cards.length, correct, wrong);
+        }
+        return { ...prev, state: 'complete' as QuizState, currentIndex: nextIndex };
+      }
+      return {
+        ...prev,
+        state: 'showing_card' as QuizState,
+        currentIndex: nextIndex,
+        currentAnswerIndex: 0,
+        currentHintLevel: 0,
+        isClose: false,
+      };
+    });
+  }, []);
 
   const submitAnswer = useCallback(
     async (userInput: string) => {
@@ -56,7 +80,6 @@ export function useQuizEngine(initialCards: QuizCard[]) {
 
       setEngine((prev) => ({ ...prev, state: 'checking' }));
 
-      // Check against the current answer only
       const result = checkAnswer(userInput, [currentRequiredAnswer]);
       const responseTimeMs = Date.now() - cardStartTime.current;
 
@@ -84,7 +107,6 @@ export function useQuizEngine(initialCards: QuizCard[]) {
       const isLastAnswer = engine.currentAnswerIndex >= totalAnswersForCard - 1;
 
       if (!isLastAnswer && result.isCorrect) {
-        // More answers to go, advance to next answer within same card
         setEngine((prev) => ({
           ...prev,
           state: 'showing_card',
@@ -96,7 +118,6 @@ export function useQuizEngine(initialCards: QuizCard[]) {
         return;
       }
 
-      // Last answer or wrong answer => show feedback and process SM-2
       const isCardCorrect = result.isCorrect && cardCorrectAll.current;
 
       const progress = await getProgress(currentCard.muscle.id);
@@ -107,17 +128,18 @@ export function useQuizEngine(initialCards: QuizCard[]) {
         currentInterval: progress?.intervalDays ?? 0,
       });
 
-      await upsertProgress({
-        muscleId: currentCard.muscle.id,
-        masteryLevel: sm2Result.nextLevel,
-        streak: sm2Result.nextStreak,
-        intervalDays: sm2Result.nextInterval,
-        nextReviewAt: toISOString(sm2Result.nextReviewAt),
-        isCorrect: isCardCorrect,
-      });
-
-      // Record daily stats for streak tracking
-      await incrementDailyStats(new Date(), isCardCorrect, progress?.totalReviews === 0);
+      // Parallelize independent DB writes
+      await Promise.all([
+        upsertProgress({
+          muscleId: currentCard.muscle.id,
+          masteryLevel: sm2Result.nextLevel,
+          streak: sm2Result.nextStreak,
+          intervalDays: sm2Result.nextInterval,
+          nextReviewAt: toISOString(sm2Result.nextReviewAt),
+          isCorrect: isCardCorrect,
+        }),
+        incrementDailyStats(new Date(), isCardCorrect, progress?.totalReviews === 0),
+      ]);
 
       const answerResult: AnswerResult = {
         muscleId: currentCard.muscle.id,
@@ -137,37 +159,13 @@ export function useQuizEngine(initialCards: QuizCard[]) {
       }));
 
       if (!isCardCorrect) {
-        setTimeout(() => {
+        feedbackTimerRef.current = setTimeout(() => {
           advanceToNext();
         }, WRONG_ANSWER_DISPLAY_MS);
       }
     },
-    [engine.state, engine.currentHintLevel, engine.currentAnswerIndex, currentCard, currentRequiredAnswer, totalAnswersForCard],
+    [engine.state, engine.currentHintLevel, engine.currentAnswerIndex, currentCard, currentRequiredAnswer, totalAnswersForCard, advanceToNext],
   );
-
-  const advanceToNext = useCallback(() => {
-    cardCorrectAll.current = true;
-    setEngine((prev) => {
-      const nextIndex = prev.currentIndex + 1;
-      if (nextIndex >= prev.cards.length) {
-        if (sessionIdRef.current) {
-          const correct = prev.results.filter((r) => r.isCorrect).length;
-          const wrong = prev.results.filter((r) => !r.isCorrect).length;
-          finishSession(sessionIdRef.current, prev.cards.length, correct, wrong);
-        }
-        return { ...prev, state: 'complete' as QuizState, currentIndex: nextIndex };
-      }
-      cardStartTime.current = Date.now();
-      return {
-        ...prev,
-        state: 'showing_card' as QuizState,
-        currentIndex: nextIndex,
-        currentAnswerIndex: 0,
-        currentHintLevel: 0,
-        isClose: false,
-      };
-    });
-  }, []);
 
   const nextCard = useCallback(() => {
     if (engine.state === 'correct_feedback') {
@@ -184,11 +182,10 @@ export function useQuizEngine(initialCards: QuizCard[]) {
 
   const getSummary = useCallback((): QuizSessionSummary => {
     const correctCount = engine.results.filter((r) => r.isCorrect).length;
-    const wrongCount = engine.results.filter((r) => !r.isCorrect).length;
     return {
       totalCards: engine.results.length,
       correctCount,
-      wrongCount,
+      wrongCount: engine.results.length - correctCount,
       accuracy: engine.results.length > 0 ? correctCount / engine.results.length : 0,
       duration: 0,
     };

@@ -1,21 +1,6 @@
 import { getDb } from './client';
 import { formatDate } from '../lib/dateUtils';
 
-export async function recordDailyActivity(date: Date = new Date()): Promise<void> {
-  const db = await getDb();
-  const dateStr = formatDate(date);
-  const existing = await db.getFirstAsync<{ date: string }>(
-    'SELECT date FROM daily_stats WHERE date = ?',
-    dateStr,
-  );
-  if (!existing) {
-    await db.runAsync(
-      'INSERT INTO daily_stats (date, reviews_done, correct_count, new_cards_seen) VALUES (?, ?, ?, ?)',
-      dateStr, 0, 0, 0,
-    );
-  }
-}
-
 export async function incrementDailyStats(
   date: Date,
   isCorrect: boolean,
@@ -23,7 +8,12 @@ export async function incrementDailyStats(
 ): Promise<void> {
   const db = await getDb();
   const dateStr = formatDate(date);
-  await recordDailyActivity(date);
+
+  // Upsert: insert if missing, then update in one step
+  await db.runAsync(
+    'INSERT OR IGNORE INTO daily_stats (date, reviews_done, correct_count, new_cards_seen) VALUES (?, ?, ?, ?)',
+    dateStr, 0, 0, 0,
+  );
   await db.runAsync(
     `UPDATE daily_stats SET
        reviews_done = reviews_done + 1,
@@ -45,16 +35,28 @@ export async function getCurrentStreak(): Promise<number> {
 
   if (rows.length === 0) return 0;
 
-  let streak = 0;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Allow streak to start from today OR yesterday (if user hasn't studied today yet)
+  let streak = 0;
+  let startOffset = 0;
+
+  const todayStr = formatDate(today);
+  if (rows[0].date !== todayStr) {
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (rows[0].date === formatDate(yesterday)) {
+      startOffset = 1;
+    } else {
+      return 0;
+    }
+  }
+
   for (let i = 0; i < rows.length; i++) {
     const expectedDate = new Date(today);
-    expectedDate.setDate(expectedDate.getDate() - i);
-    const expectedStr = formatDate(expectedDate);
-
-    if (rows[i].date === expectedStr) {
+    expectedDate.setDate(expectedDate.getDate() - i - startOffset);
+    if (rows[i].date === formatDate(expectedDate)) {
       streak++;
     } else {
       break;

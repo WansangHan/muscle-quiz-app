@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { useSettings } from '../hooks/useSettings';
 import { Difficulty } from '../types/quiz';
+import { MUSCLES } from '../data/muscles';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 
@@ -89,7 +90,7 @@ export function SettingsScreen() {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>총 근육 수</Text>
-          <Text style={styles.value}>45개</Text>
+          <Text style={styles.value}>{MUSCLES.length}개</Text>
         </View>
       </View>
     </ScreenWrapper>

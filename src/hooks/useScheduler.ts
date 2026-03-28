@@ -64,10 +64,9 @@ export function useScheduler() {
     if (!isReady) return;
     setLoading(true);
     try {
-      const due = await getDueCards();
-      const settings = await getSettings();
-      const newSeen = await getNewCardsSeenToday();
-      const locked = await getLockedMuscleIds();
+      const [due, settings, newSeen, locked] = await Promise.all([
+        getDueCards(), getSettings(), getNewCardsSeenToday(), getLockedMuscleIds(),
+      ]);
       const newRemaining = Math.max(0, settings.dailyNewLimit - newSeen);
 
       setDueCount(due.length);
@@ -89,9 +88,9 @@ export function useScheduler() {
   const buildQuizDeck = useCallback(
     async (maxCards: number = 20): Promise<QuizCard[]> => {
       const now = new Date();
-      const due = await getDueCards(now);
-      const settings = await getSettings();
-      const newSeen = await getNewCardsSeenToday(now);
+      const [due, settings, newSeen] = await Promise.all([
+        getDueCards(now), getSettings(), getNewCardsSeenToday(now),
+      ]);
       const newAllowance = Math.max(0, settings.dailyNewLimit - newSeen);
 
       const cards: QuizCard[] = [];
