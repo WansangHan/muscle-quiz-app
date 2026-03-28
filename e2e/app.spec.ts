@@ -100,10 +100,51 @@ test.describe('Muscle Quiz App', () => {
     await page.goto('/');
     await expect(page.getByText('근육 퀴즈')).toBeVisible({ timeout: 30000 });
 
-    // Click settings tab
     await page.getByText('설정').click();
     await expect(page.getByText('일일 새 카드 수')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText(/버전/)).toBeVisible();
+  });
+
+  test('설정에서 난이도를 변경할 수 있다', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText('근육 퀴즈')).toBeVisible({ timeout: 30000 });
+
+    await page.getByText('설정').click();
+    await expect(page.getByText('난이도')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('초급')).toBeVisible();
+    await expect(page.getByText('중급')).toBeVisible();
+    await expect(page.getByText('고급')).toBeVisible();
+  });
+
+  test('탐색 탭에서 부위별 목록이 보인다', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText('근육 퀴즈')).toBeVisible({ timeout: 30000 });
+
+    await page.getByText('탐색').click();
+    await expect(page.getByText('부위별 탐색')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('가슴')).toBeVisible();
+    await expect(page.getByText('등')).toBeVisible();
+    await expect(page.getByText('어깨')).toBeVisible();
+  });
+
+  test('탐색에서 부위 클릭 시 근육 목록이 보인다', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText('근육 퀴즈')).toBeVisible({ timeout: 30000 });
+
+    await page.getByText('탐색').click();
+    await expect(page.getByText('부위별 탐색')).toBeVisible({ timeout: 10000 });
+
+    await page.getByText('가슴').click();
+    await expect(page.getByText('큰가슴근')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Pectoralis Major')).toBeVisible();
+  });
+
+  test('통계 탭이 동작한다', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText('근육 퀴즈')).toBeVisible({ timeout: 30000 });
+
+    await page.getByText('통계').click();
+    await expect(page.getByText('부위별 숙련도')).toBeVisible({ timeout: 10000 });
   });
 });
 

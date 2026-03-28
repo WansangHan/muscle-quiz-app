@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "name": "Servier Medical Art",
+      "url": "https://smart.servier.com",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "note": "Primary source for anatomical illustrations"
+    },
+    {
+      "name": "Z-Anatomy",
+      "url": "https://www.z-anatomy.com",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "note": "3D model reference for custom renderings"
+    }
+  ],
+  "placeholder": "Current images are placeholder graphics. Replace with properly attributed anatomical illustrations before release."
+}

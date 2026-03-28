@@ -5,15 +5,19 @@ import { HintButton } from './HintButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 
+const ANSWER_LABELS = ['일반명', '해부학 용어', '영문/라틴'];
+
 interface Props {
   card: QuizCardType;
   hintLevel: number;
   isClose: boolean;
+  answerIndex: number;
+  totalAnswers: number;
   onSubmit: (answer: string) => void;
   onHint: () => void;
 }
 
-export function QuizCardComponent({ card, hintLevel, isClose, onSubmit, onHint }: Props) {
+export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, totalAnswers, onSubmit, onHint }: Props) {
   const [input, setInput] = useState('');
 
   const handleSubmit = () => {
@@ -32,7 +36,11 @@ export function QuizCardComponent({ card, hintLevel, isClose, onSubmit, onHint }
         </Text>
       </View>
 
-      <Text style={styles.prompt}>이 근육의 이름은?</Text>
+      <Text style={styles.prompt}>
+        {totalAnswers > 1
+          ? `${ANSWER_LABELS[answerIndex]}을 입력하세요 (${answerIndex + 1}/${totalAnswers})`
+          : '이 근육의 이름은?'}
+      </Text>
 
       {isClose && (
         <Text style={styles.closeText}>거의 맞았어요! 다시 시도해보세요.</Text>
@@ -56,7 +64,7 @@ export function QuizCardComponent({ card, hintLevel, isClose, onSubmit, onHint }
 
       <HintButton
         hintLevel={hintLevel}
-        hintTexts={card.hintTexts[0]}
+        hintTexts={card.hintTexts[answerIndex] ?? card.hintTexts[0]}
         onPress={onHint}
       />
     </View>

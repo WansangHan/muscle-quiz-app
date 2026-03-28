@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { UserSettings, DEFAULT_SETTINGS } from '../types/settings';
+import { Difficulty } from '../types/quiz';
 import { getSettings, updateSetting } from '../db/settingsRepository';
 import { useDatabase } from './useDatabase';
 
@@ -22,5 +23,10 @@ export function useSettings() {
     setSettings((prev) => ({ ...prev, dailyNewLimit: limit }));
   }, []);
 
-  return { settings, setDailyNewLimit, reload: load };
+  const setDifficulty = useCallback(async (difficulty: Difficulty) => {
+    await updateSetting('difficulty', difficulty);
+    setSettings((prev) => ({ ...prev, difficulty }));
+  }, []);
+
+  return { settings, setDailyNewLimit, setDifficulty, reload: load };
 }

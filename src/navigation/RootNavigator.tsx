@@ -3,11 +3,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HomeScreen } from '../screens/HomeScreen';
 import { QuizScreen } from '../screens/QuizScreen';
+import { BodyRegionScreen } from '../screens/BodyRegionScreen';
+import { MuscleListScreen } from '../screens/MuscleListScreen';
+import { MuscleDetailScreen } from '../screens/MuscleDetailScreen';
+import { StatisticsScreen } from '../screens/StatisticsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { Colors } from '../constants/colors';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
+const BrowseStack = createNativeStackNavigator();
 
 function HomeStackNavigator() {
   return (
@@ -20,12 +25,34 @@ function HomeStackNavigator() {
       <HomeStack.Screen
         name="Quiz"
         component={QuizScreen}
-        options={{
-          headerShown: false,
-          gestureEnabled: false, // Prevent back swipe during quiz
-        }}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
     </HomeStack.Navigator>
+  );
+}
+
+function BrowseStackNavigator() {
+  return (
+    <BrowseStack.Navigator>
+      <BrowseStack.Screen
+        name="BodyRegion"
+        component={BodyRegionScreen}
+        options={{ headerShown: false }}
+      />
+      <BrowseStack.Screen
+        name="MuscleList"
+        component={MuscleListScreen}
+        options={({ route }: any) => ({
+          title: route.params?.label ?? '근육 목록',
+          headerBackTitle: '뒤로',
+        })}
+      />
+      <BrowseStack.Screen
+        name="MuscleDetail"
+        component={MuscleDetailScreen}
+        options={{ title: '근육 상세', headerBackTitle: '뒤로' }}
+      />
+    </BrowseStack.Navigator>
   );
 }
 
@@ -45,16 +72,22 @@ export function RootNavigator() {
       <Tab.Screen
         name="HomeTab"
         component={HomeStackNavigator}
-        options={{
-          tabBarLabel: '홈',
-        }}
+        options={{ tabBarLabel: '홈' }}
+      />
+      <Tab.Screen
+        name="BrowseTab"
+        component={BrowseStackNavigator}
+        options={{ tabBarLabel: '탐색' }}
+      />
+      <Tab.Screen
+        name="Statistics"
+        component={StatisticsScreen}
+        options={{ tabBarLabel: '통계' }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{
-          tabBarLabel: '설정',
-        }}
+        options={{ tabBarLabel: '설정' }}
       />
     </Tab.Navigator>
   );

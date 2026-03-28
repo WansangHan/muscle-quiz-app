@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "muscle-quiz-temp",
-    "slug": "muscle-quiz-temp",
+    "name": "근육 퀴즈",
+    "slug": "muscle-quiz-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,10 +9,11 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4A90D9"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.musclequiz.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,10 +22,13 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "package": "com.musclequiz.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "imageAttribution": "Anatomical illustrations from Servier Medical Art (CC BY 4.0) and Z-Anatomy (CC BY-SA 4.0)"
     }
   }
 }

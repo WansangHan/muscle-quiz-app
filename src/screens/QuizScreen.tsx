@@ -61,7 +61,7 @@ export function QuizScreen() {
           <View style={styles.feedbackContainer}>
             <AnswerFeedback
               isCorrect={engine.state === 'correct_feedback'}
-              correctAnswer={engine.currentCard.requiredAnswers[0]}
+              correctAnswer={engine.currentCard.requiredAnswers.join(' / ')}
               userAnswer={engine.results[engine.results.length - 1]?.userAnswer ?? ''}
             />
             {engine.state === 'correct_feedback' && (
@@ -77,6 +77,8 @@ export function QuizScreen() {
           <QuizCardComponent
             card={engine.currentCard}
             hintLevel={engine.hintLevel}
+            answerIndex={engine.currentAnswerIndex}
+            totalAnswers={engine.totalAnswersForCard}
             isClose={engine.isClose}
             onSubmit={engine.submitAnswer}
             onHint={engine.useHint}

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { QuizCard } from '../types/quiz';
-import { UserProgress } from '../types/progress';
+import { QuizCard, Difficulty } from '../types/quiz';
 import { MUSCLES } from '../data/muscles';
 import {
   getDueCards,
@@ -21,12 +20,31 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function buildQuizCard(muscleId: string): QuizCard | null {
+function buildQuizCard(muscleId: string, difficulty: Difficulty = 'beginner'): QuizCard | null {
   const muscle = MUSCLES.find((m) => m.id === muscleId);
   if (!muscle) return null;
 
-  // Phase 1: beginner - only koreanCommon
-  const requiredAnswers = [muscle.names.koreanCommon];
+  let requiredAnswers: string[];
+  switch (difficulty) {
+    case 'advanced':
+      requiredAnswers = [
+        muscle.names.koreanCommon,
+        muscle.names.koreanAnatomical,
+        muscle.names.latinEnglish,
+      ];
+      break;
+    case 'intermediate':
+      requiredAnswers = [
+        muscle.names.koreanCommon,
+        muscle.names.koreanAnatomical,
+      ];
+      break;
+    case 'beginner':
+    default:
+      requiredAnswers = [muscle.names.koreanCommon];
+      break;
+  }
+
   const hintTexts = requiredAnswers.map((answer) => ({
     charCount: getCharCountHint(answer),
     choseong: extractChoseong(answer),
@@ -81,7 +99,7 @@ export function useScheduler() {
       // 1. Due review cards first (sorted by most overdue)
       for (const progress of due) {
         if (cards.length >= maxCards) break;
-        const card = buildQuizCard(progress.muscleId);
+        const card = buildQuizCard(progress.muscleId, settings.difficulty);
         if (card) cards.push(card);
       }
 
@@ -92,7 +110,7 @@ export function useScheduler() {
         if (toUnlock.length > 0) {
           await unlockCards(toUnlock);
           for (const muscleId of toUnlock) {
-            const card = buildQuizCard(muscleId);
+            const card = buildQuizCard(muscleId, settings.difficulty);
             if (card) cards.push(card);
           }
         }

@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { TodaySummary } from '../components/home/TodaySummary';
+import { StreakBadge } from '../components/home/StreakBadge';
 import { useScheduler } from '../hooks/useScheduler';
+import { getCurrentStreak, getTotalStudyDays } from '../db/streakRepository';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { QuizCard } from '../types/quiz';
@@ -18,10 +20,14 @@ export function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const { dueCount, newCardsRemaining, totalMastered, loading, refresh, buildQuizDeck } =
     useScheduler();
+  const [streak, setStreak] = useState(0);
+  const [totalDays, setTotalDays] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
       refresh();
+      getCurrentStreak().then(setStreak).catch(() => {});
+      getTotalStudyDays().then(setTotalDays).catch(() => {});
     }, [refresh]),
   );
 
@@ -48,6 +54,8 @@ export function HomeScreen() {
   return (
     <ScreenWrapper>
       <Text style={styles.header}>근육 퀴즈</Text>
+
+      <StreakBadge streak={streak} totalDays={totalDays} />
 
       <TodaySummary
         dueCount={dueCount}

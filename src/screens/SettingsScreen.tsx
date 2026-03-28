@@ -1,12 +1,19 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { useSettings } from '../hooks/useSettings';
+import { Difficulty } from '../types/quiz';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 
+const DIFFICULTY_OPTIONS: { key: Difficulty; label: string; desc: string }[] = [
+  { key: 'beginner', label: '초급', desc: '일반명만' },
+  { key: 'intermediate', label: '중급', desc: '일반명 + 해부학 용어' },
+  { key: 'advanced', label: '고급', desc: '3개 모두' },
+];
+
 export function SettingsScreen() {
-  const { settings, setDailyNewLimit } = useSettings();
+  const { settings, setDailyNewLimit, setDifficulty } = useSettings();
 
   const handleLimitChange = (text: string) => {
     const num = parseInt(text, 10);
@@ -36,12 +43,37 @@ export function SettingsScreen() {
           />
         </View>
 
-        <View style={styles.row}>
-          <View style={styles.rowLabel}>
-            <Text style={styles.label}>난이도</Text>
-            <Text style={styles.description}>현재: 초급 (일반명만)</Text>
+        <View style={styles.difficultySection}>
+          <Text style={styles.label}>난이도</Text>
+          <View style={styles.difficultyRow}>
+            {DIFFICULTY_OPTIONS.map((opt) => (
+              <TouchableOpacity
+                key={opt.key}
+                style={[
+                  styles.difficultyButton,
+                  settings.difficulty === opt.key && styles.difficultyButtonActive,
+                ]}
+                onPress={() => setDifficulty(opt.key)}
+              >
+                <Text
+                  style={[
+                    styles.difficultyLabel,
+                    settings.difficulty === opt.key && styles.difficultyLabelActive,
+                  ]}
+                >
+                  {opt.label}
+                </Text>
+                <Text
+                  style={[
+                    styles.difficultyDesc,
+                    settings.difficulty === opt.key && styles.difficultyDescActive,
+                  ]}
+                >
+                  {opt.desc}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
-          <Text style={styles.comingSoon}>Phase 2</Text>
         </View>
       </View>
 
@@ -49,11 +81,15 @@ export function SettingsScreen() {
         <Text style={styles.sectionTitle}>정보</Text>
         <View style={styles.row}>
           <Text style={styles.label}>버전</Text>
-          <Text style={styles.value}>1.0.0 (Phase 1)</Text>
+          <Text style={styles.value}>1.0.0</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>이미지 출처</Text>
           <Text style={styles.value}>Servier Medical Art (CC BY 4.0)</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>총 근육 수</Text>
+          <Text style={styles.value}>45개</Text>
         </View>
       </View>
     </ScreenWrapper>
@@ -115,9 +151,41 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor: Colors.background,
   },
-  comingSoon: {
+  difficultySection: {
+    paddingVertical: Spacing.sm,
+  },
+  difficultyRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  difficultyButton: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    alignItems: 'center',
+  },
+  difficultyButtonActive: {
+    borderColor: Colors.primary,
+    backgroundColor: '#EBF3FC',
+  },
+  difficultyLabel: {
+    fontSize: FontSize.sm,
+    fontWeight: '700',
+    color: Colors.textSecondary,
+  },
+  difficultyLabelActive: {
+    color: Colors.primary,
+  },
+  difficultyDesc: {
     fontSize: FontSize.xs,
     color: Colors.textLight,
-    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  difficultyDescActive: {
+    color: Colors.primaryDark,
   },
 });
