@@ -4,6 +4,7 @@ import { QuizState } from '../constants/quizState';
 import { SessionMode } from '../constants/sessionMode';
 import { HintLevel, MAX_HINT_LEVEL } from '../constants/hintLevel';
 import { MasteryLevel } from '../types/progress';
+import { QuizMode } from '../constants/quizMode';
 import { checkAnswer } from '../lib/answerChecker';
 import { calculateNextReview } from '../lib/sm2';
 import { toISOString } from '../lib/dateUtils';
@@ -22,7 +23,11 @@ interface QuizEngineState {
   isClose: boolean;
 }
 
-export function useQuizEngine(initialCards: QuizCard[], sessionMode: SessionMode = SessionMode.Standard) {
+export function useQuizEngine(
+  initialCards: QuizCard[],
+  sessionMode: SessionMode = SessionMode.Standard,
+  quizMode: QuizMode = QuizMode.TextInput,
+) {
   const [engine, setEngine] = useState<QuizEngineState>({
     state: initialCards.length > 0 ? QuizState.ShowingCard : QuizState.Complete,
     currentIndex: 0,
@@ -84,11 +89,14 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: SessionMode
 
       setEngine((prev) => ({ ...prev, state: QuizState.Checking }));
 
-      const result = checkAnswer(userInput, [currentRequiredAnswer]);
+      const isMultipleChoice = quizMode === QuizMode.MultipleChoice;
+      const result = isMultipleChoice
+        ? { isCorrect: userInput === currentRequiredAnswer, isClose: false }
+        : checkAnswer(userInput, [currentRequiredAnswer]);
       const responseTimeMs = Date.now() - cardStartTime.current;
 
-      if (result.isClose) {
-        // Auto-increment hint on close match
+      if (!isMultipleChoice && result.isClose) {
+        // Auto-increment hint on close match (text input only)
         setEngine((prev) => ({
           ...prev,
           state: QuizState.ShowingCard,

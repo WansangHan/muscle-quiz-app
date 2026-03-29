@@ -11,24 +11,21 @@ import {
 } from '../db/progressRepository';
 import { getSettings } from '../db/settingsRepository';
 import { extractChoseong, getCharCountHint, getInitialLettersHint } from '../lib/hangulUtils';
+import { shuffle } from '../lib/arrayUtils';
+import { getAnswerName } from '../lib/muscleUtils';
+import { generateChoices } from '../lib/choiceGenerator';
+import { QuizMode } from '../constants/quizMode';
 import { useDatabase } from './useDatabase';
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-async function buildQuizCard(muscleId: string, latinMode: boolean = false): Promise<QuizCard | null> {
+async function buildQuizCard(
+  muscleId: string,
+  latinMode: boolean = false,
+  quizMode: QuizMode = QuizMode.TextInput,
+): Promise<QuizCard | null> {
   const muscle = MUSCLES.find((m) => m.id === muscleId);
   if (!muscle) return null;
 
-  const requiredAnswers = latinMode
-    ? [muscle.names.latinEnglish]
-    : [muscle.names.koreanAnatomical];
+  const requiredAnswers = [getAnswerName(muscle, latinMode)];
 
   const hintTexts = requiredAnswers.map((answer) => ({
     charCount: getCharCountHint(answer),
@@ -45,7 +42,11 @@ async function buildQuizCard(muscleId: string, latinMode: boolean = false): Prom
       }
     : undefined;
 
-  return { muscle, requiredAnswers, hintTexts, meta };
+  const choices = quizMode === QuizMode.MultipleChoice
+    ? generateChoices(muscle, latinMode)
+    : undefined;
+
+  return { muscle, requiredAnswers, hintTexts, choices, meta };
 }
 
 export function useScheduler() {
@@ -79,7 +80,7 @@ export function useScheduler() {
   }, [refresh]);
 
   const buildQuizDeck = useCallback(
-    async (maxCards: number = 20): Promise<QuizCard[]> => {
+    async (maxCards: number = 20, quizMode: QuizMode = QuizMode.TextInput): Promise<QuizCard[]> => {
       const now = new Date();
       const [due, settings, newSeen] = await Promise.all([
         getDueCards(now), getSettings(), getNewCardsSeenToday(now),
@@ -91,7 +92,7 @@ export function useScheduler() {
       // 1. Due review cards first (sorted by most overdue)
       for (const progress of due) {
         if (cards.length >= maxCards) break;
-        const card = await buildQuizCard(progress.muscleId, settings.latinMode);
+        const card = await buildQuizCard(progress.muscleId, settings.latinMode, quizMode);
         if (card) cards.push(card);
       }
 
@@ -102,7 +103,7 @@ export function useScheduler() {
         if (toUnlock.length > 0) {
           await unlockCards(toUnlock);
           for (const muscleId of toUnlock) {
-            const card = await buildQuizCard(muscleId, settings.latinMode);
+            const card = await buildQuizCard(muscleId, settings.latinMode, quizMode);
             if (card) cards.push(card);
           }
         }
@@ -114,11 +115,11 @@ export function useScheduler() {
   );
 
   const buildCardsForMuscleIds = useCallback(
-    async (muscleIds: string[]): Promise<QuizCard[]> => {
+    async (muscleIds: string[], quizMode: QuizMode = QuizMode.TextInput): Promise<QuizCard[]> => {
       const settings = await getSettings();
       const cards: QuizCard[] = [];
       for (const id of muscleIds) {
-        const card = await buildQuizCard(id, settings.latinMode);
+        const card = await buildQuizCard(id, settings.latinMode, quizMode);
         if (card) cards.push(card);
       }
       return shuffle(cards);

@@ -17,6 +17,7 @@ export interface QuizCard {
     charCount: string;
     choseong: string;
   }[];
+  choices?: string[];  // 객관식 모드일 때 4개 선택지
   meta?: QuizCardMeta;
 }
 

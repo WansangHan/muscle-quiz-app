@@ -67,35 +67,51 @@ export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, total
         {latinMode ? 'What is the name of this muscle?' : '이 근육의 이름은?'}
       </Text>
 
-      {isClose && (
-        <Text style={styles.closeText}>거의 맞았어요! 다시 시도해보세요.</Text>
+      {card.choices && card.choices.length > 0 ? (
+        <View style={styles.choicesContainer}>
+          {card.choices.map((choice, idx) => (
+            <PressableScale
+              key={idx}
+              style={styles.choiceButton}
+              onPress={() => onSubmit(choice)}
+            >
+              <Text style={styles.choiceText}>{choice}</Text>
+            </PressableScale>
+          ))}
+        </View>
+      ) : (
+        <>
+          {isClose && (
+            <Text style={styles.closeText}>거의 맞았어요! 다시 시도해보세요.</Text>
+          )}
+
+          <Animated.View style={{ width: '100%', transform: [{ translateX: shakeAnim }] }}>
+            <TextInput
+              ref={inputRef}
+              style={[styles.input, isClose && styles.inputClose]}
+              value={input}
+              onChangeText={setInput}
+              placeholder={latinMode ? 'Enter muscle name' : '근육 이름을 입력하세요'}
+              placeholderTextColor={Colors.textLight}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="go"
+              onSubmitEditing={handleSubmit}
+            />
+          </Animated.View>
+
+          <PressableScale style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitText}>확인</Text>
+          </PressableScale>
+
+          <HintButton
+            hintLevel={hintLevel}
+            hintTexts={card.hintTexts[answerIndex] ?? card.hintTexts[0]}
+            latinMode={latinMode}
+            onPress={onHint}
+          />
+        </>
       )}
-
-      <Animated.View style={{ width: '100%', transform: [{ translateX: shakeAnim }] }}>
-        <TextInput
-          ref={inputRef}
-          style={[styles.input, isClose && styles.inputClose]}
-          value={input}
-          onChangeText={setInput}
-          placeholder={latinMode ? 'Enter muscle name' : '근육 이름을 입력하세요'}
-          placeholderTextColor={Colors.textLight}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="go"
-          onSubmitEditing={handleSubmit}
-        />
-      </Animated.View>
-
-      <PressableScale style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>확인</Text>
-      </PressableScale>
-
-      <HintButton
-        hintLevel={hintLevel}
-        hintTexts={card.hintTexts[answerIndex] ?? card.hintTexts[0]}
-        latinMode={latinMode}
-        onPress={onHint}
-      />
     </View>
   );
 }
@@ -172,5 +188,24 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: FontSize.lg,
     fontWeight: '700',
+  },
+  choicesContainer: {
+    width: '100%',
+    gap: Spacing.sm,
+  },
+  choiceButton: {
+    width: '100%',
+    backgroundColor: Colors.surface,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    alignItems: 'center' as const,
+  },
+  choiceText: {
+    fontSize: FontSize.md,
+    fontWeight: '600',
+    color: Colors.text,
   },
 });

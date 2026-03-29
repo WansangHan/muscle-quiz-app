@@ -8,9 +8,11 @@ import { ProgressBar } from '../components/quiz/ProgressBar';
 import { QuizCardComponent } from '../components/quiz/QuizCard';
 import { AnswerFeedback } from '../components/quiz/AnswerFeedback';
 import { useQuizEngine } from '../hooks/useQuizEngine';
+import { useScheduler } from '../hooks/useScheduler';
 import { MasteryBadge } from '../components/common/MasteryBadge';
 import { WRONG_ANSWER_DISPLAY_MS } from '../constants/quiz';
 import { QuizState } from '../constants/quizState';
+import { QuizMode } from '../constants/quizMode';
 import { SessionMode } from '../constants/sessionMode';
 import { Routes } from '../constants/routes';
 import { Colors } from '../constants/colors';
@@ -58,13 +60,21 @@ const countdownStyles = StyleSheet.create({
   },
 });
 
+function deriveSessionMode(quizMode: QuizMode, latinMode: boolean): SessionMode {
+  if (quizMode === QuizMode.MultipleChoice) {
+    return latinMode ? SessionMode.MultipleChoiceLatin : SessionMode.MultipleChoice;
+  }
+  return latinMode ? SessionMode.Latin : SessionMode.Standard;
+}
+
 export function QuizScreen() {
   const route = useRoute<RouteProp<HomeStackParamList, 'Quiz'>>();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const { cards, latinMode } = route.params;
+  const { cards, latinMode, quizMode = QuizMode.TextInput } = route.params;
 
-  const sessionMode = latinMode ? SessionMode.Latin : SessionMode.Standard;
-  const engine = useQuizEngine(cards, sessionMode);
+  const sessionMode = deriveSessionMode(quizMode, latinMode);
+  const engine = useQuizEngine(cards, sessionMode, quizMode);
+  const { buildCardsForMuscleIds } = useScheduler();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const prevIndexRef = useRef(0);
@@ -136,12 +146,10 @@ export function QuizScreen() {
           {summary.wrongCount > 0 && (
             <PressableScale
               style={styles.retryButton}
-              onPress={() => {
-                const wrongCards = cards.filter((c) =>
-                  engine.wrongMuscleIds.includes(c.muscle.id)
-                );
-                if (wrongCards.length > 0) {
-                  navigation.replace(Routes.Quiz, { cards: wrongCards, latinMode });
+              onPress={async () => {
+                const retryCards = await buildCardsForMuscleIds(engine.wrongMuscleIds, quizMode);
+                if (retryCards.length > 0) {
+                  navigation.replace(Routes.Quiz, { cards: retryCards, latinMode, quizMode });
                 }
               }}
             >

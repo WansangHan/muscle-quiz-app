@@ -12,6 +12,7 @@ import { useSettings } from '../hooks/useSettings';
 import { getCurrentStreak, getTotalStudyDays } from '../db/streakRepository';
 import { getMasteryDistribution, getNearPromotionCount, getUnlockedCount } from '../db/progressRepository';
 import { MUSCLES } from '../data/muscles';
+import { QuizMode } from '../constants/quizMode';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { QuizCard } from '../types/quiz';
@@ -19,7 +20,7 @@ import { Routes } from '../constants/routes';
 
 export type HomeStackParamList = {
   Home: undefined;
-  Quiz: { cards: QuizCard[]; latinMode: boolean };
+  Quiz: { cards: QuizCard[]; latinMode: boolean; quizMode?: QuizMode };
 };
 
 export function HomeScreen() {
@@ -27,6 +28,7 @@ export function HomeScreen() {
   const { dueCount, newCardsRemaining, studiedToday, loading, refresh, buildQuizDeck } =
     useScheduler();
   const { settings } = useSettings();
+  const [quizMode, setQuizMode] = useState<QuizMode>(QuizMode.TextInput);
   const [streak, setStreak] = useState(0);
   const [totalDays, setTotalDays] = useState(0);
   const [distribution, setDistribution] = useState<Record<number, number>>({ 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
@@ -45,11 +47,11 @@ export function HomeScreen() {
   );
 
   const handleStartQuiz = async () => {
-    const cards = await buildQuizDeck(20);
+    const cards = await buildQuizDeck(20, quizMode);
     if (cards.length === 0) {
       return; // No cards available
     }
-    navigation.navigate(Routes.Quiz, { cards, latinMode: settings.latinMode });
+    navigation.navigate(Routes.Quiz, { cards, latinMode: settings.latinMode, quizMode });
   };
 
   const totalAvailable = dueCount + newCardsRemaining;
@@ -76,6 +78,33 @@ export function HomeScreen() {
         studiedToday={studiedToday}
         nearPromotion={nearPromotion}
       />
+
+      <View style={styles.modeToggle}>
+        <PressableScale
+          style={[
+            styles.modeButton,
+            quizMode === QuizMode.MultipleChoice && styles.modeButtonActive,
+          ]}
+          onPress={() => setQuizMode(QuizMode.MultipleChoice)}
+        >
+          <Text style={[
+            styles.modeButtonText,
+            quizMode === QuizMode.MultipleChoice && styles.modeButtonTextActive,
+          ]}>객관식</Text>
+        </PressableScale>
+        <PressableScale
+          style={[
+            styles.modeButton,
+            quizMode === QuizMode.TextInput && styles.modeButtonActive,
+          ]}
+          onPress={() => setQuizMode(QuizMode.TextInput)}
+        >
+          <Text style={[
+            styles.modeButtonText,
+            quizMode === QuizMode.TextInput && styles.modeButtonTextActive,
+          ]}>주관식</Text>
+        </PressableScale>
+      </View>
 
       <PressableScale
         style={[styles.startButton, totalAvailable === 0 && styles.startButtonDisabled]}
@@ -129,6 +158,32 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: Colors.text,
     marginBottom: Spacing.lg,
+  },
+  modeToggle: {
+    flexDirection: 'row',
+    backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.md,
+    padding: 4,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  modeButton: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    alignItems: 'center' as const,
+  },
+  modeButtonActive: {
+    backgroundColor: Colors.primary,
+  },
+  modeButtonText: {
+    fontSize: FontSize.md,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  modeButtonTextActive: {
+    color: '#fff',
   },
   startButton: {
     backgroundColor: Colors.primary,
