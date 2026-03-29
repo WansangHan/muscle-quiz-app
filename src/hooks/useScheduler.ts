@@ -114,5 +114,18 @@ export function useScheduler() {
     [],
   );
 
-  return { dueCount, newCardsRemaining, totalMastered, loading, refresh, buildQuizDeck };
+  const buildCardsForMuscleIds = useCallback(
+    async (muscleIds: string[]): Promise<QuizCard[]> => {
+      const settings = await getSettings();
+      const cards: QuizCard[] = [];
+      for (const id of muscleIds) {
+        const card = buildQuizCard(id, settings.difficulty);
+        if (card) cards.push(card);
+      }
+      return shuffle(cards);
+    },
+    [],
+  );
+
+  return { dueCount, newCardsRemaining, totalMastered, loading, refresh, buildQuizDeck, buildCardsForMuscleIds };
 }

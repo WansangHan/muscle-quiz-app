@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { PressableScale } from '../components/common/PressableScale';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { getAllProgress } from '../db/progressRepository';
+import { useScheduler } from '../hooks/useScheduler';
 import { MUSCLES, BODY_REGION_LABELS } from '../data/muscles';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
@@ -25,6 +27,8 @@ interface WeakMuscle {
 
 export function StatisticsScreen() {
   const { isReady } = useDatabase();
+  const navigation = useNavigation<any>();
+  const { buildCardsForMuscleIds } = useScheduler();
   const [regionStats, setRegionStats] = useState<RegionStats[]>([]);
   const [weakSpots, setWeakSpots] = useState<WeakMuscle[]>([]);
   const [overallStats, setOverallStats] = useState({ total: 0, unlocked: 0, mastered: 0, accuracy: 0 });
@@ -136,6 +140,7 @@ export function StatisticsScreen() {
         <View style={styles.heatmapCard}>
           {regionStats.map((stat) => (
             <View key={stat.region} style={styles.regionRow}>
+              <View style={[styles.regionDot, { backgroundColor: Colors.region[stat.region] ?? Colors.primary }]} />
               <Text style={styles.regionLabel}>{stat.label}</Text>
               <View style={styles.regionBar}>
                 <View
@@ -169,6 +174,17 @@ export function StatisticsScreen() {
                 </View>
               ))}
             </View>
+            <PressableScale
+              style={styles.reviewButton}
+              onPress={async () => {
+                const cards = await buildCardsForMuscleIds(weakSpots.map((w) => w.id));
+                if (cards.length > 0) {
+                  navigation.navigate('HomeTab', { screen: 'Quiz', params: { cards } });
+                }
+              }}
+            >
+              <Text style={styles.reviewButtonText}>이 근육들 복습하기</Text>
+            </PressableScale>
           </>
         )}
       </ScrollView>
@@ -228,8 +244,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.xs,
   },
+  regionDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: Spacing.sm,
+  },
   regionLabel: {
-    width: 80,
+    width: 70,
     fontSize: FontSize.sm,
     color: Colors.text,
   },
@@ -276,6 +298,18 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   weakRate: {
+    fontSize: FontSize.md,
+    fontWeight: '700',
+  },
+  reviewButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center' as const,
+    marginBottom: Spacing.lg,
+  },
+  reviewButtonText: {
+    color: '#fff',
     fontSize: FontSize.md,
     fontWeight: '700',
   },

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Image, TextInput, Animated, StyleSheet } from 'react-native';
 import { QuizCard as QuizCardType } from '../../types/quiz';
+import { PressableScale } from '../common/PressableScale';
 import { HintButton } from './HintButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
@@ -20,13 +21,31 @@ interface Props {
 
 export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, totalAnswers, onSubmit, onHint }: Props) {
   const [input, setInput] = useState('');
+  const inputRef = useRef<TextInput>(null);
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
-  // Clear input when card or answer index changes
-  useEffect(() => { setInput(''); }, [card.muscle.id, answerIndex]);
+  // Clear input and auto-focus when card or answer index changes
+  useEffect(() => {
+    setInput('');
+    const timer = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
+  }, [card.muscle.id, answerIndex]);
+
+  // Shake animation when close match
+  useEffect(() => {
+    if (isClose) {
+      Animated.sequence([
+        Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -10, duration: 50, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 6, duration: 50, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -6, duration: 50, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
+      ]).start();
+    }
+  }, [isClose, shakeAnim]);
 
   const handleSubmit = () => {
     if (!input.trim()) return;
-    Keyboard.dismiss();
     onSubmit(input.trim());
     setInput('');
   };
@@ -50,21 +69,24 @@ export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, total
         <Text style={styles.closeText}>거의 맞았어요! 다시 시도해보세요.</Text>
       )}
 
-      <TextInput
-        style={styles.input}
-        value={input}
-        onChangeText={setInput}
-        placeholder="근육 이름을 입력하세요"
-        placeholderTextColor={Colors.textLight}
-        autoCapitalize="none"
-        autoCorrect={false}
-        returnKeyType="done"
-        onSubmitEditing={handleSubmit}
-      />
+      <Animated.View style={{ width: '100%', transform: [{ translateX: shakeAnim }] }}>
+        <TextInput
+          ref={inputRef}
+          style={[styles.input, isClose && styles.inputClose]}
+          value={input}
+          onChangeText={setInput}
+          placeholder="근육 이름을 입력하세요"
+          placeholderTextColor={Colors.textLight}
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="go"
+          onSubmitEditing={handleSubmit}
+        />
+      </Animated.View>
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+      <PressableScale style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitText}>확인</Text>
-      </TouchableOpacity>
+      </PressableScale>
 
       <HintButton
         hintLevel={hintLevel}
@@ -132,12 +154,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     marginBottom: Spacing.md,
   },
+  inputClose: {
+    borderColor: Colors.warning,
+  },
   submitButton: {
     backgroundColor: Colors.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xxl,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
+    alignItems: 'center' as const,
   },
   submitText: {
     color: '#fff',

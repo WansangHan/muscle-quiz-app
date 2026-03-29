@@ -1,15 +1,21 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, Linking, Pressable } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ImageZoomModal } from '../components/common/ImageZoomModal';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { MUSCLES, BODY_REGION_LABELS } from '../data/muscles';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { BrowseStackParamList } from './BodyRegionScreen';
+import attributionsData from '../../assets/images/muscles/_attributions.json';
 
 export function MuscleDetailScreen() {
   const route = useRoute<RouteProp<BrowseStackParamList, 'MuscleDetail'>>();
   const muscle = MUSCLES.find((m) => m.id === route.params.muscleId);
+  const attribution = muscle
+    ? (attributionsData.images as Record<string, { author: string; license: string; sourceUrl: string }>)[muscle.id]
+    : undefined;
 
   if (!muscle) {
     return (
@@ -19,6 +25,8 @@ export function MuscleDetailScreen() {
     );
   }
 
+  const [zoomVisible, setZoomVisible] = useState(false);
+
   const relatedMuscles = muscle.relatedMuscles
     .map((id) => MUSCLES.find((m) => m.id === id))
     .filter(Boolean);
@@ -26,9 +34,34 @@ export function MuscleDetailScreen() {
   return (
     <ScreenWrapper>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.imageContainer}>
-          <Image source={muscle.imageAsset} style={styles.image} resizeMode="contain" />
-        </View>
+        <Pressable onPress={() => setZoomVisible(true)}>
+          <View style={styles.imageContainer}>
+            <Image source={muscle.imageAsset} style={styles.image} resizeMode="contain" />
+            <View style={styles.zoomHint}>
+              <MaterialCommunityIcons name="magnify-plus-outline" size={16} color={Colors.textSecondary} />
+            </View>
+          </View>
+        </Pressable>
+        <ImageZoomModal
+          visible={zoomVisible}
+          imageSource={muscle.imageAsset}
+          onClose={() => setZoomVisible(false)}
+        />
+
+        {attribution && (
+          <View style={styles.attributionContainer}>
+            <Text style={styles.attributionText}>
+              이미지: {attribution.author} · {attribution.license}
+              {' · '}
+              <Text
+                style={styles.attributionLink}
+                onPress={() => Linking.openURL(attribution.sourceUrl)}
+              >
+                출처
+              </Text>
+            </Text>
+          </View>
+        )}
 
         <View style={styles.nameCard}>
           <NameRow label="근육명" value={muscle.names.koreanAnatomical} />
@@ -39,7 +72,19 @@ export function MuscleDetailScreen() {
         <View style={styles.infoCard}>
           <InfoRow label="부위" value={BODY_REGION_LABELS[muscle.bodyRegion] ?? muscle.bodyRegion} />
           <InfoRow label="근육군" value={muscle.muscleGroup} />
-          <InfoRow label="난이도" value={'★'.repeat(muscle.difficulty) + '☆'.repeat(3 - muscle.difficulty)} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>난이도</Text>
+            <View style={styles.starsRow}>
+              {[1, 2, 3].map((i) => (
+                <MaterialCommunityIcons
+                  key={i}
+                  name={i <= muscle.difficulty ? 'star' : 'star-outline'}
+                  size={18}
+                  color={i <= muscle.difficulty ? Colors.accent : Colors.textLight}
+                />
+              ))}
+            </View>
+          </View>
         </View>
 
         {muscle.tags.length > 0 && (
@@ -105,6 +150,29 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '80%',
   },
+  zoomHint: {
+    position: 'absolute',
+    bottom: Spacing.sm,
+    right: Spacing.sm,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: BorderRadius.round,
+    padding: 4,
+  },
+  attributionContainer: {
+    marginTop: -Spacing.sm,
+    marginBottom: Spacing.md,
+    paddingHorizontal: Spacing.sm,
+  },
+  attributionText: {
+    fontSize: FontSize.xs,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: FontSize.xs * 1.4,
+  },
+  attributionLink: {
+    color: Colors.primary,
+    textDecorationLine: 'underline' as const,
+  },
   nameCard: {
     backgroundColor: Colors.cardBackground,
     borderRadius: BorderRadius.lg,
@@ -149,6 +217,10 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: '600',
     color: Colors.text,
+  },
+  starsRow: {
+    flexDirection: 'row',
+    gap: 2,
   },
   sectionTitle: {
     fontSize: FontSize.md,

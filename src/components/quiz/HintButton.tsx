@@ -1,5 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 
@@ -22,9 +23,12 @@ export function HintButton({ hintLevel, hintTexts, onPress }: Props) {
     <>
       {hintLevel < 2 && (
         <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text style={styles.buttonText}>
-            {hintLevel === 0 ? '힌트 보기' : '초성 힌트'}
-          </Text>
+          <View style={styles.buttonInner}>
+            <MaterialCommunityIcons name="lightbulb-outline" size={16} color={Colors.text} />
+            <Text style={styles.buttonText}>
+              {hintLevel === 0 ? '힌트 보기' : '초성 힌트'}
+            </Text>
+          </View>
         </TouchableOpacity>
       )}
       {hintDisplay && <Text style={styles.hintText}>{hintDisplay}</Text>}
@@ -36,14 +40,21 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.warning,
+    backgroundColor: '#FEF3C7',
     borderRadius: BorderRadius.md,
     alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  buttonInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
   },
   buttonText: {
     fontSize: FontSize.sm,
     fontWeight: '600',
-    color: '#333',
+    color: Colors.text,
   },
   hintText: {
     fontSize: FontSize.md,

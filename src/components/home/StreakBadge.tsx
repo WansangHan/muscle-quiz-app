@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 
@@ -14,7 +15,7 @@ export function StreakBadge({ streak, totalDays }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.streakBox}>
-        <Text style={styles.streakIcon}>{'🔥'}</Text>
+        <MaterialCommunityIcons name="fire" size={20} color="#E65100" />
         <Text style={styles.streakValue}>{streak}</Text>
         <Text style={styles.streakLabel}>일 연속</Text>
       </View>
@@ -41,9 +42,6 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.round,
     gap: Spacing.xs,
-  },
-  streakIcon: {
-    fontSize: 18,
   },
   streakValue: {
     fontSize: FontSize.lg,

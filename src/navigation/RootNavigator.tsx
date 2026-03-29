@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import { HomeScreen } from '../screens/HomeScreen';
 import { QuizScreen } from '../screens/QuizScreen';
 import { BodyRegionScreen } from '../screens/BodyRegionScreen';
-import { MuscleListScreen } from '../screens/MuscleListScreen';
 import { MuscleDetailScreen } from '../screens/MuscleDetailScreen';
 import { StatisticsScreen } from '../screens/StatisticsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
@@ -25,7 +25,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen
         name="Quiz"
         component={QuizScreen}
-        options={{ headerShown: false, gestureEnabled: false }}
+        options={{ headerShown: false, gestureEnabled: false, animation: 'slide_from_bottom' }}
       />
     </HomeStack.Navigator>
   );
@@ -38,14 +38,6 @@ function BrowseStackNavigator() {
         name="BodyRegion"
         component={BodyRegionScreen}
         options={{ headerShown: false }}
-      />
-      <BrowseStack.Screen
-        name="MuscleList"
-        component={MuscleListScreen}
-        options={({ route }: any) => ({
-          title: route.params?.label ?? '근육 목록',
-          headerBackTitle: '뒤로',
-        })}
       />
       <BrowseStack.Screen
         name="MuscleDetail"
@@ -72,22 +64,34 @@ export function RootNavigator() {
       <Tab.Screen
         name="HomeTab"
         component={HomeStackNavigator}
-        options={{ tabBarLabel: '홈' }}
+        options={{
+          tabBarLabel: '홈',
+          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
+        }}
       />
       <Tab.Screen
         name="BrowseTab"
         component={BrowseStackNavigator}
-        options={{ tabBarLabel: '탐색' }}
+        options={{
+          tabBarLabel: '탐색',
+          tabBarIcon: ({ color, size }) => <Ionicons name="search-outline" size={size} color={color} />,
+        }}
       />
       <Tab.Screen
         name="Statistics"
         component={StatisticsScreen}
-        options={{ tabBarLabel: '통계' }}
+        options={{
+          tabBarLabel: '통계',
+          tabBarIcon: ({ color, size }) => <Ionicons name="stats-chart-outline" size={size} color={color} />,
+        }}
       />
       <Tab.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ tabBarLabel: '설정' }}
+        options={{
+          tabBarLabel: '설정',
+          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" size={size} color={color} />,
+        }}
       />
     </Tab.Navigator>
   );

@@ -6,7 +6,7 @@ import { toISOString } from '../lib/dateUtils';
 import { getProgress, upsertProgress } from '../db/progressRepository';
 import { createSession, finishSession, saveAnswer } from '../db/sessionRepository';
 import { incrementDailyStats } from '../db/streakRepository';
-import { WRONG_ANSWER_DISPLAY_MS } from '../constants/quiz';
+import { WRONG_ANSWER_DISPLAY_MS, CORRECT_ANSWER_DISPLAY_MS } from '../constants/quiz';
 
 interface QuizEngineState {
   state: QuizState;
@@ -84,7 +84,13 @@ export function useQuizEngine(initialCards: QuizCard[]) {
       const responseTimeMs = Date.now() - cardStartTime.current;
 
       if (result.isClose) {
-        setEngine((prev) => ({ ...prev, state: 'showing_card', isClose: true }));
+        // Auto-increment hint on close match
+        setEngine((prev) => ({
+          ...prev,
+          state: 'showing_card',
+          isClose: true,
+          currentHintLevel: Math.min(prev.currentHintLevel + 1, 2),
+        }));
         return;
       }
 
@@ -162,13 +168,21 @@ export function useQuizEngine(initialCards: QuizCard[]) {
         feedbackTimerRef.current = setTimeout(() => {
           advanceToNext();
         }, WRONG_ANSWER_DISPLAY_MS);
+      } else {
+        feedbackTimerRef.current = setTimeout(() => {
+          advanceToNext();
+        }, CORRECT_ANSWER_DISPLAY_MS);
       }
     },
     [engine.state, engine.currentHintLevel, engine.currentAnswerIndex, currentCard, currentRequiredAnswer, totalAnswersForCard, advanceToNext],
   );
 
   const nextCard = useCallback(() => {
-    if (engine.state === 'correct_feedback') {
+    if (engine.state === 'correct_feedback' || engine.state === 'wrong_feedback') {
+      if (feedbackTimerRef.current) {
+        clearTimeout(feedbackTimerRef.current);
+        feedbackTimerRef.current = null;
+      }
       advanceToNext();
     }
   }, [engine.state, advanceToNext]);
@@ -191,6 +205,10 @@ export function useQuizEngine(initialCards: QuizCard[]) {
     };
   }, [engine.results]);
 
+  const wrongMuscleIds = engine.results
+    .filter((r) => !r.isCorrect)
+    .map((r) => r.muscleId);
+
   return {
     state: engine.state,
     currentIndex: engine.currentIndex,
@@ -201,6 +219,7 @@ export function useQuizEngine(initialCards: QuizCard[]) {
     results: engine.results,
     hintLevel: engine.currentHintLevel,
     isClose: engine.isClose,
+    wrongMuscleIds,
     submitAnswer,
     nextCard,
     useHint,

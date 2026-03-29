@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 
@@ -10,11 +10,25 @@ interface Props {
 
 export function ProgressBar({ current, total }: Props) {
   const progress = total > 0 ? current / total : 0;
+  const animatedWidth = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedWidth, {
+      toValue: progress,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  }, [progress, animatedWidth]);
+
+  const width = animatedWidth.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+  });
 
   return (
     <View style={styles.container}>
       <View style={styles.barBackground}>
-        <View style={[styles.barFill, { width: `${progress * 100}%` }]} />
+        <Animated.View style={[styles.barFill, { width }]} />
       </View>
       <Text style={styles.text}>
         {current} / {total}

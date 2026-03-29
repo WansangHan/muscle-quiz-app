@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
+import { PressableScale } from '../components/common/PressableScale';
 import { TodaySummary } from '../components/home/TodaySummary';
 import { StreakBadge } from '../components/home/StreakBadge';
 import { useScheduler } from '../hooks/useScheduler';
@@ -63,7 +64,7 @@ export function HomeScreen() {
         totalMastered={totalMastered}
       />
 
-      <TouchableOpacity
+      <PressableScale
         style={[styles.startButton, totalAvailable === 0 && styles.startButtonDisabled]}
         onPress={handleStartQuiz}
         disabled={totalAvailable === 0}
@@ -72,9 +73,11 @@ export function HomeScreen() {
           {totalAvailable > 0 ? '학습 시작' : '오늘 학습 완료!'}
         </Text>
         {totalAvailable > 0 && (
-          <Text style={styles.startButtonSub}>{totalAvailable}장 학습 가능</Text>
+          <Text style={styles.startButtonSub}>
+            복습 {dueCount}장 + 새 카드 {newCardsRemaining}장
+          </Text>
         )}
-      </TouchableOpacity>
+      </PressableScale>
 
       <View style={styles.infoCard}>
         <Text style={styles.infoTitle}>학습 방법</Text>

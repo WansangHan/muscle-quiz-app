@@ -16,6 +16,7 @@ export const BONUS_INCREMENT = 0.1;
 
 export const WRONG_ANSWER_INTERVAL = 0.5; // 12시간 (일 단위)
 export const WRONG_ANSWER_DISPLAY_MS = 3000;
+export const CORRECT_ANSWER_DISPLAY_MS = 1200;
 
 export const DEFAULT_DAILY_NEW_LIMIT = 10;
 export const DEFAULT_QUIZ_BATCH_SIZE = 20;
