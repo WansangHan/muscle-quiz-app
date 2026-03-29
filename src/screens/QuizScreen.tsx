@@ -10,6 +10,9 @@ import { AnswerFeedback } from '../components/quiz/AnswerFeedback';
 import { useQuizEngine } from '../hooks/useQuizEngine';
 import { MasteryBadge } from '../components/common/MasteryBadge';
 import { WRONG_ANSWER_DISPLAY_MS } from '../constants/quiz';
+import { QuizState } from '../constants/quizState';
+import { SessionMode } from '../constants/sessionMode';
+import { Routes } from '../constants/routes';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { HomeStackParamList } from './HomeScreen';
@@ -60,7 +63,8 @@ export function QuizScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const { cards, latinMode } = route.params;
 
-  const engine = useQuizEngine(cards, latinMode ? 'latin' : 'standard');
+  const sessionMode = latinMode ? SessionMode.Latin : SessionMode.Standard;
+  const engine = useQuizEngine(cards, sessionMode);
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const prevIndexRef = useRef(0);
@@ -77,7 +81,7 @@ export function QuizScreen() {
     }
   }, [engine.currentIndex, slideAnim, fadeAnim]);
 
-  if (engine.state === 'complete') {
+  if (engine.state === QuizState.Complete) {
     const summary = engine.getSummary();
     const accuracyPct = Math.round(summary.accuracy * 100);
     const encouragement =
@@ -137,7 +141,7 @@ export function QuizScreen() {
                   engine.wrongMuscleIds.includes(c.muscle.id)
                 );
                 if (wrongCards.length > 0) {
-                  navigation.replace('Quiz', { cards: wrongCards, latinMode });
+                  navigation.replace(Routes.Quiz, { cards: wrongCards, latinMode });
                 }
               }}
             >
@@ -156,7 +160,7 @@ export function QuizScreen() {
     );
   }
 
-  const showFeedback = engine.state === 'correct_feedback' || engine.state === 'wrong_feedback';
+  const showFeedback = engine.state === QuizState.CorrectFeedback || engine.state === QuizState.WrongFeedback;
 
   return (
     <ScreenWrapper>
@@ -169,7 +173,7 @@ export function QuizScreen() {
 
         {showFeedback && engine.currentCard ? (
           <View style={styles.feedbackContainer}>
-            {engine.state === 'wrong_feedback' && (
+            {engine.state === QuizState.WrongFeedback && (
               <View style={styles.wrongImageContainer}>
                 <Image
                   source={engine.currentCard.muscle.imageAsset}
@@ -179,7 +183,7 @@ export function QuizScreen() {
               </View>
             )}
             <AnswerFeedback
-              isCorrect={engine.state === 'correct_feedback'}
+              isCorrect={engine.state === QuizState.CorrectFeedback}
               correctAnswer={engine.currentCard.requiredAnswers.join(' / ')}
               userAnswer={engine.results[engine.results.length - 1]?.userAnswer ?? ''}
               previousLevel={engine.results[engine.results.length - 1]?.previousLevel ?? 0}
@@ -190,10 +194,10 @@ export function QuizScreen() {
             />
             <PressableScale style={styles.nextButton} onPress={engine.nextCard}>
               <Text style={styles.nextButtonText}>
-                {engine.state === 'correct_feedback' ? '다음 문제' : '이미 외웠어요'}
+                {engine.state === QuizState.CorrectFeedback ? '다음 문제' : '이미 외웠어요'}
               </Text>
             </PressableScale>
-            {engine.state === 'wrong_feedback' && (
+            {engine.state === QuizState.WrongFeedback && (
               <CountdownBar durationMs={WRONG_ANSWER_DISPLAY_MS} />
             )}
           </View>

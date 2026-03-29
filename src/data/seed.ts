@@ -1,6 +1,7 @@
 import { Database } from '../db/types';
 import { MUSCLES } from './muscles';
 import { DEFAULT_SETTINGS } from '../types/settings';
+import { SettingsKey } from '../constants/settingsKeys';
 import { toISOString } from '../lib/dateUtils';
 
 export async function seedDatabase(db: Database): Promise<void> {
@@ -41,19 +42,23 @@ export async function seedDatabase(db: Database): Promise<void> {
 
     const settings = DEFAULT_SETTINGS;
     await db.runAsync(
-      "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('latin_mode', ?)",
+      'INSERT OR IGNORE INTO user_settings (key, value) VALUES (?, ?)',
+      SettingsKey.LatinMode,
       settings.latinMode ? '1' : '0',
     );
     await db.runAsync(
-      "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('daily_new_limit', ?)",
+      'INSERT OR IGNORE INTO user_settings (key, value) VALUES (?, ?)',
+      SettingsKey.DailyNewLimit,
       String(settings.dailyNewLimit),
     );
     await db.runAsync(
-      "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('notification_enabled', ?)",
+      'INSERT OR IGNORE INTO user_settings (key, value) VALUES (?, ?)',
+      SettingsKey.NotificationEnabled,
       settings.notificationEnabled ? '1' : '0',
     );
     await db.runAsync(
-      "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('notification_time', ?)",
+      'INSERT OR IGNORE INTO user_settings (key, value) VALUES (?, ?)',
+      SettingsKey.NotificationTime,
       settings.notificationTime,
     );
 

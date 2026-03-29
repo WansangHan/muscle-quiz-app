@@ -1,3 +1,6 @@
+import { BodyRegion } from './bodyRegion';
+import { MasteryLevel } from './masteryLevel';
+
 export const Colors = {
   primary: '#2563EB',
   primaryDark: '#1D4ED8',
@@ -29,13 +32,13 @@ export const Colors = {
     thigh_inner: '#6366F1',
     calf: '#84CC16',
     neck: '#F97316',
-  } as Record<string, string>,
+  } as Record<BodyRegion, string>,
 
   mastery: {
-    0: '#94A3B8', // 새카드 - 슬레이트
-    1: '#F59E0B', // 학습중 - 앰버
-    2: '#3B82F6', // 익숙함 - 블루
-    3: '#10B981', // 능숙함 - 에메랄드
-    4: '#8B5CF6', // 완전숙달 - 바이올렛
-  } as Record<number, string>,
+    [MasteryLevel.New]: '#94A3B8', // 새카드 - 슬레이트
+    [MasteryLevel.Learning]: '#F59E0B', // 학습중 - 앰버
+    [MasteryLevel.Familiar]: '#3B82F6', // 익숙함 - 블루
+    [MasteryLevel.Proficient]: '#10B981', // 능숙함 - 에메랄드
+    [MasteryLevel.Mastered]: '#8B5CF6', // 완전숙달 - 바이올렛
+  } as Record<MasteryLevel, string>,
 };

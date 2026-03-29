@@ -1,4 +1,5 @@
 import { MuscleData } from '../types/muscle';
+import { BodyRegion } from '../constants/bodyRegion';
 
 // 근육별 이미지 맵 (Metro는 정적 require만 지원)
 const images: Record<string, number> = {
@@ -54,7 +55,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'pectoralis_major',
     names: { koreanCommon: '큰가슴근', koreanAnatomical: '대흉근', latinEnglish: 'Pectoralis Major' },
-    bodyRegion: 'chest',
+    bodyRegion: BodyRegion.Chest,
     muscleGroup: 'chest',
     difficulty: 1,
     imageAsset: images.pectoralis_major,
@@ -64,7 +65,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'pectoralis_minor',
     names: { koreanCommon: '작은가슴근', koreanAnatomical: '소흉근', latinEnglish: 'Pectoralis Minor' },
-    bodyRegion: 'chest',
+    bodyRegion: BodyRegion.Chest,
     muscleGroup: 'chest',
     difficulty: 2,
     imageAsset: images.pectoralis_minor,
@@ -74,7 +75,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'serratus_anterior',
     names: { koreanCommon: '앞톱니근', koreanAnatomical: '전거근', latinEnglish: 'Serratus Anterior' },
-    bodyRegion: 'chest',
+    bodyRegion: BodyRegion.Chest,
     muscleGroup: 'chest',
     difficulty: 2,
     imageAsset: images.serratus_anterior,
@@ -85,7 +86,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'trapezius',
     names: { koreanCommon: '등세모근', koreanAnatomical: '승모근', latinEnglish: 'Trapezius' },
-    bodyRegion: 'back',
+    bodyRegion: BodyRegion.Back,
     muscleGroup: 'superficial_back',
     difficulty: 1,
     imageAsset: images.trapezius,
@@ -95,7 +96,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'latissimus_dorsi',
     names: { koreanCommon: '넓은등근', koreanAnatomical: '광배근', latinEnglish: 'Latissimus Dorsi' },
-    bodyRegion: 'back',
+    bodyRegion: BodyRegion.Back,
     muscleGroup: 'superficial_back',
     difficulty: 1,
     imageAsset: images.latissimus_dorsi,
@@ -105,7 +106,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'erector_spinae',
     names: { koreanCommon: '척추세움근', koreanAnatomical: '척주기립근', latinEnglish: 'Erector Spinae' },
-    bodyRegion: 'back',
+    bodyRegion: BodyRegion.Back,
     muscleGroup: 'deep_back',
     difficulty: 2,
     imageAsset: images.erector_spinae,
@@ -115,7 +116,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'rhomboid_major',
     names: { koreanCommon: '큰마름근', koreanAnatomical: '대능형근', latinEnglish: 'Rhomboid Major' },
-    bodyRegion: 'back',
+    bodyRegion: BodyRegion.Back,
     muscleGroup: 'deep_back',
     difficulty: 2,
     imageAsset: images.rhomboid_major,
@@ -125,7 +126,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'rhomboid_minor',
     names: { koreanCommon: '작은마름근', koreanAnatomical: '소능형근', latinEnglish: 'Rhomboid Minor' },
-    bodyRegion: 'back',
+    bodyRegion: BodyRegion.Back,
     muscleGroup: 'deep_back',
     difficulty: 3,
     imageAsset: images.rhomboid_minor,
@@ -135,7 +136,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'levator_scapulae',
     names: { koreanCommon: '어깨올림근', koreanAnatomical: '견갑거근', latinEnglish: 'Levator Scapulae' },
-    bodyRegion: 'back',
+    bodyRegion: BodyRegion.Back,
     muscleGroup: 'deep_back',
     difficulty: 2,
     imageAsset: images.levator_scapulae,
@@ -146,7 +147,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'deltoid',
     names: { koreanCommon: '어깨세모근', koreanAnatomical: '삼각근', latinEnglish: 'Deltoid' },
-    bodyRegion: 'shoulder',
+    bodyRegion: BodyRegion.Shoulder,
     muscleGroup: 'shoulder',
     difficulty: 1,
     imageAsset: images.deltoid,
@@ -156,7 +157,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'supraspinatus',
     names: { koreanCommon: '가시위근', koreanAnatomical: '극상근', latinEnglish: 'Supraspinatus' },
-    bodyRegion: 'shoulder',
+    bodyRegion: BodyRegion.Shoulder,
     muscleGroup: 'rotator_cuff',
     difficulty: 3,
     imageAsset: images.supraspinatus,
@@ -166,7 +167,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'infraspinatus',
     names: { koreanCommon: '가시아래근', koreanAnatomical: '극하근', latinEnglish: 'Infraspinatus' },
-    bodyRegion: 'shoulder',
+    bodyRegion: BodyRegion.Shoulder,
     muscleGroup: 'rotator_cuff',
     difficulty: 3,
     imageAsset: images.infraspinatus,
@@ -176,7 +177,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'teres_major',
     names: { koreanCommon: '큰원근', koreanAnatomical: '대원근', latinEnglish: 'Teres Major' },
-    bodyRegion: 'shoulder',
+    bodyRegion: BodyRegion.Shoulder,
     muscleGroup: 'shoulder',
     difficulty: 2,
     imageAsset: images.teres_major,
@@ -186,7 +187,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'teres_minor',
     names: { koreanCommon: '작은원근', koreanAnatomical: '소원근', latinEnglish: 'Teres Minor' },
-    bodyRegion: 'shoulder',
+    bodyRegion: BodyRegion.Shoulder,
     muscleGroup: 'rotator_cuff',
     difficulty: 3,
     imageAsset: images.teres_minor,
@@ -197,7 +198,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'biceps_brachii',
     names: { koreanCommon: '위팔두갈래근', koreanAnatomical: '이두근', latinEnglish: 'Biceps Brachii' },
-    bodyRegion: 'arm',
+    bodyRegion: BodyRegion.Arm,
     muscleGroup: 'arm_anterior',
     difficulty: 1,
     imageAsset: images.biceps_brachii,
@@ -207,7 +208,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'triceps_brachii',
     names: { koreanCommon: '위팔세갈래근', koreanAnatomical: '삼두근', latinEnglish: 'Triceps Brachii' },
-    bodyRegion: 'arm',
+    bodyRegion: BodyRegion.Arm,
     muscleGroup: 'arm_posterior',
     difficulty: 1,
     imageAsset: images.triceps_brachii,
@@ -217,7 +218,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'brachialis',
     names: { koreanCommon: '위팔근', koreanAnatomical: '상완근', latinEnglish: 'Brachialis' },
-    bodyRegion: 'arm',
+    bodyRegion: BodyRegion.Arm,
     muscleGroup: 'arm_anterior',
     difficulty: 2,
     imageAsset: images.brachialis,
@@ -227,7 +228,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'brachioradialis',
     names: { koreanCommon: '위팔노근', koreanAnatomical: '완요골근', latinEnglish: 'Brachioradialis' },
-    bodyRegion: 'arm',
+    bodyRegion: BodyRegion.Arm,
     muscleGroup: 'forearm',
     difficulty: 2,
     imageAsset: images.brachioradialis,
@@ -237,7 +238,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'pronator_teres',
     names: { koreanCommon: '원엎침근', koreanAnatomical: '원회내근', latinEnglish: 'Pronator Teres' },
-    bodyRegion: 'arm',
+    bodyRegion: BodyRegion.Arm,
     muscleGroup: 'forearm',
     difficulty: 3,
     imageAsset: images.pronator_teres,
@@ -247,7 +248,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'wrist_flexors',
     names: { koreanCommon: '손목굽힘근', koreanAnatomical: '수근굴근', latinEnglish: 'Wrist Flexors' },
-    bodyRegion: 'arm',
+    bodyRegion: BodyRegion.Arm,
     muscleGroup: 'forearm',
     difficulty: 2,
     imageAsset: images.wrist_flexors,
@@ -258,7 +259,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'rectus_abdominis',
     names: { koreanCommon: '배곧은근', koreanAnatomical: '복직근', latinEnglish: 'Rectus Abdominis' },
-    bodyRegion: 'abdomen',
+    bodyRegion: BodyRegion.Abdomen,
     muscleGroup: 'abdomen_anterior',
     difficulty: 1,
     imageAsset: images.rectus_abdominis,
@@ -268,7 +269,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'external_oblique',
     names: { koreanCommon: '배바깥빗근', koreanAnatomical: '외복사근', latinEnglish: 'External Oblique' },
-    bodyRegion: 'abdomen',
+    bodyRegion: BodyRegion.Abdomen,
     muscleGroup: 'abdomen_lateral',
     difficulty: 2,
     imageAsset: images.external_oblique,
@@ -278,7 +279,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'internal_oblique',
     names: { koreanCommon: '배속빗근', koreanAnatomical: '내복사근', latinEnglish: 'Internal Oblique' },
-    bodyRegion: 'abdomen',
+    bodyRegion: BodyRegion.Abdomen,
     muscleGroup: 'abdomen_lateral',
     difficulty: 2,
     imageAsset: images.internal_oblique,
@@ -288,7 +289,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'transversus_abdominis',
     names: { koreanCommon: '배가로근', koreanAnatomical: '복횡근', latinEnglish: 'Transversus Abdominis' },
-    bodyRegion: 'abdomen',
+    bodyRegion: BodyRegion.Abdomen,
     muscleGroup: 'abdomen_deep',
     difficulty: 2,
     imageAsset: images.transversus_abdominis,
@@ -299,7 +300,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'gluteus_maximus',
     names: { koreanCommon: '큰볼기근', koreanAnatomical: '대둔근', latinEnglish: 'Gluteus Maximus' },
-    bodyRegion: 'glute',
+    bodyRegion: BodyRegion.Glute,
     muscleGroup: 'glute',
     difficulty: 1,
     imageAsset: images.gluteus_maximus,
@@ -309,7 +310,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'gluteus_medius',
     names: { koreanCommon: '중간볼기근', koreanAnatomical: '중둔근', latinEnglish: 'Gluteus Medius' },
-    bodyRegion: 'glute',
+    bodyRegion: BodyRegion.Glute,
     muscleGroup: 'glute',
     difficulty: 2,
     imageAsset: images.gluteus_medius,
@@ -319,7 +320,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'gluteus_minimus',
     names: { koreanCommon: '작은볼기근', koreanAnatomical: '소둔근', latinEnglish: 'Gluteus Minimus' },
-    bodyRegion: 'glute',
+    bodyRegion: BodyRegion.Glute,
     muscleGroup: 'glute',
     difficulty: 3,
     imageAsset: images.gluteus_minimus,
@@ -329,7 +330,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'tensor_fasciae_latae',
     names: { koreanCommon: '넓은근막긴장근', koreanAnatomical: '대퇴근막장근', latinEnglish: 'Tensor Fasciae Latae' },
-    bodyRegion: 'glute',
+    bodyRegion: BodyRegion.Glute,
     muscleGroup: 'glute',
     difficulty: 3,
     imageAsset: images.tensor_fasciae_latae,
@@ -339,7 +340,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'piriformis',
     names: { koreanCommon: '궁둥구멍근', koreanAnatomical: '이상근', latinEnglish: 'Piriformis' },
-    bodyRegion: 'glute',
+    bodyRegion: BodyRegion.Glute,
     muscleGroup: 'deep_hip',
     difficulty: 3,
     imageAsset: images.piriformis,
@@ -350,7 +351,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'rectus_femoris',
     names: { koreanCommon: '넙다리곧은근', koreanAnatomical: '대퇴직근', latinEnglish: 'Rectus Femoris' },
-    bodyRegion: 'thigh_front',
+    bodyRegion: BodyRegion.ThighFront,
     muscleGroup: 'quadriceps',
     difficulty: 1,
     imageAsset: images.rectus_femoris,
@@ -360,7 +361,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'vastus_lateralis',
     names: { koreanCommon: '가쪽넓은근', koreanAnatomical: '외측광근', latinEnglish: 'Vastus Lateralis' },
-    bodyRegion: 'thigh_front',
+    bodyRegion: BodyRegion.ThighFront,
     muscleGroup: 'quadriceps',
     difficulty: 2,
     imageAsset: images.vastus_lateralis,
@@ -370,7 +371,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'vastus_medialis',
     names: { koreanCommon: '안쪽넓은근', koreanAnatomical: '내측광근', latinEnglish: 'Vastus Medialis' },
-    bodyRegion: 'thigh_front',
+    bodyRegion: BodyRegion.ThighFront,
     muscleGroup: 'quadriceps',
     difficulty: 2,
     imageAsset: images.vastus_medialis,
@@ -380,7 +381,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'vastus_intermedius',
     names: { koreanCommon: '중간넓은근', koreanAnatomical: '중간광근', latinEnglish: 'Vastus Intermedius' },
-    bodyRegion: 'thigh_front',
+    bodyRegion: BodyRegion.ThighFront,
     muscleGroup: 'quadriceps',
     difficulty: 3,
     imageAsset: images.vastus_intermedius,
@@ -391,7 +392,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'biceps_femoris',
     names: { koreanCommon: '넙다리두갈래근', koreanAnatomical: '대퇴이두근', latinEnglish: 'Biceps Femoris' },
-    bodyRegion: 'thigh_back',
+    bodyRegion: BodyRegion.ThighBack,
     muscleGroup: 'hamstrings',
     difficulty: 1,
     imageAsset: images.biceps_femoris,
@@ -401,7 +402,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'semitendinosus',
     names: { koreanCommon: '반힘줄근', koreanAnatomical: '반건양근', latinEnglish: 'Semitendinosus' },
-    bodyRegion: 'thigh_back',
+    bodyRegion: BodyRegion.ThighBack,
     muscleGroup: 'hamstrings',
     difficulty: 2,
     imageAsset: images.semitendinosus,
@@ -411,7 +412,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'semimembranosus',
     names: { koreanCommon: '반막근', koreanAnatomical: '반막양근', latinEnglish: 'Semimembranosus' },
-    bodyRegion: 'thigh_back',
+    bodyRegion: BodyRegion.ThighBack,
     muscleGroup: 'hamstrings',
     difficulty: 2,
     imageAsset: images.semimembranosus,
@@ -422,7 +423,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'adductor_magnus',
     names: { koreanCommon: '큰모음근', koreanAnatomical: '대내전근', latinEnglish: 'Adductor Magnus' },
-    bodyRegion: 'thigh_inner',
+    bodyRegion: BodyRegion.ThighInner,
     muscleGroup: 'adductors',
     difficulty: 2,
     imageAsset: images.adductor_magnus,
@@ -432,7 +433,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'adductor_longus',
     names: { koreanCommon: '긴모음근', koreanAnatomical: '장내전근', latinEnglish: 'Adductor Longus' },
-    bodyRegion: 'thigh_inner',
+    bodyRegion: BodyRegion.ThighInner,
     muscleGroup: 'adductors',
     difficulty: 2,
     imageAsset: images.adductor_longus,
@@ -442,7 +443,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'gracilis',
     names: { koreanCommon: '두덩정강근', koreanAnatomical: '박근', latinEnglish: 'Gracilis' },
-    bodyRegion: 'thigh_inner',
+    bodyRegion: BodyRegion.ThighInner,
     muscleGroup: 'adductors',
     difficulty: 3,
     imageAsset: images.gracilis,
@@ -453,7 +454,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'gastrocnemius',
     names: { koreanCommon: '장딴지근', koreanAnatomical: '비복근', latinEnglish: 'Gastrocnemius' },
-    bodyRegion: 'calf',
+    bodyRegion: BodyRegion.Calf,
     muscleGroup: 'calf',
     difficulty: 1,
     imageAsset: images.gastrocnemius,
@@ -463,7 +464,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'soleus',
     names: { koreanCommon: '가자미근', koreanAnatomical: '비장근', latinEnglish: 'Soleus' },
-    bodyRegion: 'calf',
+    bodyRegion: BodyRegion.Calf,
     muscleGroup: 'calf',
     difficulty: 2,
     imageAsset: images.soleus,
@@ -473,7 +474,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'tibialis_anterior',
     names: { koreanCommon: '앞정강근', koreanAnatomical: '전경골근', latinEnglish: 'Tibialis Anterior' },
-    bodyRegion: 'calf',
+    bodyRegion: BodyRegion.Calf,
     muscleGroup: 'calf_anterior',
     difficulty: 2,
     imageAsset: images.tibialis_anterior,
@@ -484,7 +485,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'sternocleidomastoid',
     names: { koreanCommon: '목빗근', koreanAnatomical: '흉쇄유돌근', latinEnglish: 'Sternocleidomastoid' },
-    bodyRegion: 'neck',
+    bodyRegion: BodyRegion.Neck,
     muscleGroup: 'neck',
     difficulty: 2,
     imageAsset: images.sternocleidomastoid,
@@ -494,7 +495,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'scalenes',
     names: { koreanCommon: '목갈비근', koreanAnatomical: '사각근', latinEnglish: 'Scalenes' },
-    bodyRegion: 'neck',
+    bodyRegion: BodyRegion.Neck,
     muscleGroup: 'neck',
     difficulty: 3,
     imageAsset: images.scalenes,
@@ -504,7 +505,7 @@ export const MUSCLES: MuscleData[] = [
   {
     id: 'diaphragm',
     names: { koreanCommon: '가로막', koreanAnatomical: '횡격막', latinEnglish: 'Diaphragm' },
-    bodyRegion: 'neck',
+    bodyRegion: BodyRegion.Neck,
     muscleGroup: 'respiratory',
     difficulty: 1,
     imageAsset: images.diaphragm,
@@ -513,16 +514,16 @@ export const MUSCLES: MuscleData[] = [
   },
 ];
 
-export const BODY_REGION_LABELS: Record<string, string> = {
-  chest: '가슴',
-  back: '등',
-  shoulder: '어깨',
-  arm: '팔',
-  abdomen: '복부',
-  glute: '엉덩이',
-  thigh_front: '허벅지 앞',
-  thigh_back: '허벅지 뒤',
-  thigh_inner: '허벅지 안쪽',
-  calf: '종아리',
-  neck: '목/기타',
+export const BODY_REGION_LABELS: Record<BodyRegion, string> = {
+  [BodyRegion.Chest]: '가슴',
+  [BodyRegion.Back]: '등',
+  [BodyRegion.Shoulder]: '어깨',
+  [BodyRegion.Arm]: '팔',
+  [BodyRegion.Abdomen]: '복부',
+  [BodyRegion.Glute]: '엉덩이',
+  [BodyRegion.ThighFront]: '허벅지 앞',
+  [BodyRegion.ThighBack]: '허벅지 뒤',
+  [BodyRegion.ThighInner]: '허벅지 안쪽',
+  [BodyRegion.Calf]: '종아리',
+  [BodyRegion.Neck]: '목/기타',
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { MASTERY_LABELS } from '../../constants/quiz';
+import { MasteryLevel } from '../../constants/masteryLevel';
 import { FontSize, Spacing, BorderRadius } from '../../constants/spacing';
 
 interface Props {
@@ -14,7 +15,7 @@ export function MasteryDistributionBar({ distribution, height = 12, showLegend =
   const total = Object.values(distribution).reduce((a, b) => a + b, 0);
   if (total === 0) return null;
 
-  const levels = [0, 1, 2, 3, 4];
+  const levels: MasteryLevel[] = [MasteryLevel.New, MasteryLevel.Learning, MasteryLevel.Familiar, MasteryLevel.Proficient, MasteryLevel.Mastered];
 
   return (
     <View>

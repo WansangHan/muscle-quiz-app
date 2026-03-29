@@ -9,14 +9,16 @@ import { getAllProgress } from '../db/progressRepository';
 import { useScheduler } from '../hooks/useScheduler';
 import { useSettings } from '../hooks/useSettings';
 import { MUSCLES, BODY_REGION_LABELS } from '../data/muscles';
+import { BodyRegion } from '../constants/bodyRegion';
 import { Colors } from '../constants/colors';
 import { MASTERY_LABELS } from '../constants/quiz';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { MasteryLevel } from '../types/progress';
+import { Routes } from '../constants/routes';
 import { useDatabase } from '../hooks/useDatabase';
 
 interface RegionStats {
-  region: string;
+  region: BodyRegion;
   label: string;
   total: number;
   mastered: number;
@@ -67,7 +69,7 @@ export function StatisticsScreen() {
     });
 
     // Region stats
-    const regions = new Map<string, { total: number; levels: number[]; mastered: number; distribution: Record<number, number> }>();
+    const regions = new Map<BodyRegion, { total: number; levels: number[]; mastered: number; distribution: Record<number, number> }>();
     for (const muscle of MUSCLES) {
       const entry = regions.get(muscle.bodyRegion) ?? { total: 0, levels: [], mastered: 0, distribution: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 } };
       entry.total++;
@@ -154,7 +156,7 @@ export function StatisticsScreen() {
 
         <Text style={styles.sectionTitle}>부위별 숙련도</Text>
         <View style={styles.legendRow}>
-          {([0, 1, 2, 3, 4] as const).map((level) => (
+          {([MasteryLevel.New, MasteryLevel.Learning, MasteryLevel.Familiar, MasteryLevel.Proficient, MasteryLevel.Mastered] as const).map((level) => (
             <View key={level} style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: Colors.mastery[level] }]} />
               <Text style={styles.legendText}>{MASTERY_LABELS[level]}</Text>
@@ -205,7 +207,7 @@ export function StatisticsScreen() {
               onPress={async () => {
                 const cards = await buildCardsForMuscleIds(weakSpots.map((w) => w.id));
                 if (cards.length > 0) {
-                  navigation.navigate('HomeTab', { screen: 'Quiz', params: { cards, latinMode: settings.latinMode } });
+                  navigation.navigate(Routes.HomeTab, { screen: Routes.Quiz, params: { cards, latinMode: settings.latinMode } });
                 }
               }}
             >

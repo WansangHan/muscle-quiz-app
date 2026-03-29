@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { QuizCard, QuizState, AnswerResult, QuizSessionSummary } from '../types/quiz';
+import { QuizCard, AnswerResult, QuizSessionSummary } from '../types/quiz';
+import { QuizState } from '../constants/quizState';
+import { SessionMode } from '../constants/sessionMode';
+import { HintLevel, MAX_HINT_LEVEL } from '../constants/hintLevel';
+import { MasteryLevel } from '../types/progress';
 import { checkAnswer } from '../lib/answerChecker';
 import { calculateNextReview } from '../lib/sm2';
 import { toISOString } from '../lib/dateUtils';
@@ -7,25 +11,24 @@ import { getProgress, upsertProgress } from '../db/progressRepository';
 import { createSession, finishSession, saveAnswer } from '../db/sessionRepository';
 import { incrementDailyStats } from '../db/streakRepository';
 import { WRONG_ANSWER_DISPLAY_MS, CORRECT_ANSWER_DISPLAY_MS, PROMOTION_THRESHOLDS } from '../constants/quiz';
-import { MasteryLevel } from '../types/progress';
 
 interface QuizEngineState {
   state: QuizState;
   currentIndex: number;
   cards: QuizCard[];
   results: AnswerResult[];
-  currentHintLevel: number;
+  currentHintLevel: HintLevel;
   currentAnswerIndex: number;
   isClose: boolean;
 }
 
-export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 'standard') {
+export function useQuizEngine(initialCards: QuizCard[], sessionMode: SessionMode = SessionMode.Standard) {
   const [engine, setEngine] = useState<QuizEngineState>({
-    state: initialCards.length > 0 ? 'showing_card' : 'complete',
+    state: initialCards.length > 0 ? QuizState.ShowingCard : QuizState.Complete,
     currentIndex: 0,
     cards: initialCards,
     results: [],
-    currentHintLevel: 0,
+    currentHintLevel: HintLevel.None,
     currentAnswerIndex: 0,
     isClose: false,
   });
@@ -62,14 +65,14 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
           const wrong = prev.results.length - correct;
           finishSession(sessionIdRef.current, prev.cards.length, correct, wrong);
         }
-        return { ...prev, state: 'complete' as QuizState, currentIndex: nextIndex };
+        return { ...prev, state: QuizState.Complete, currentIndex: nextIndex };
       }
       return {
         ...prev,
-        state: 'showing_card' as QuizState,
+        state: QuizState.ShowingCard,
         currentIndex: nextIndex,
         currentAnswerIndex: 0,
-        currentHintLevel: 0,
+        currentHintLevel: HintLevel.None,
         isClose: false,
       };
     });
@@ -77,9 +80,9 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
 
   const submitAnswer = useCallback(
     async (userInput: string) => {
-      if (engine.state !== 'showing_card' || !currentCard || !currentRequiredAnswer) return;
+      if (engine.state !== QuizState.ShowingCard || !currentCard || !currentRequiredAnswer) return;
 
-      setEngine((prev) => ({ ...prev, state: 'checking' }));
+      setEngine((prev) => ({ ...prev, state: QuizState.Checking }));
 
       const result = checkAnswer(userInput, [currentRequiredAnswer]);
       const responseTimeMs = Date.now() - cardStartTime.current;
@@ -88,9 +91,9 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
         // Auto-increment hint on close match
         setEngine((prev) => ({
           ...prev,
-          state: 'showing_card',
+          state: QuizState.ShowingCard,
           isClose: true,
-          currentHintLevel: Math.min(prev.currentHintLevel + 1, 2),
+          currentHintLevel: Math.min(prev.currentHintLevel + 1, MAX_HINT_LEVEL) as HintLevel,
         }));
         return;
       }
@@ -116,9 +119,9 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
       if (!isLastAnswer && result.isCorrect) {
         setEngine((prev) => ({
           ...prev,
-          state: 'showing_card',
+          state: QuizState.ShowingCard,
           currentAnswerIndex: prev.currentAnswerIndex + 1,
-          currentHintLevel: 0,
+          currentHintLevel: HintLevel.None,
           isClose: false,
         }));
         cardStartTime.current = Date.now();
@@ -148,7 +151,7 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
         incrementDailyStats(new Date(), isCardCorrect, progress?.totalReviews === 0),
       ]);
 
-      const previousLevel = (progress?.masteryLevel ?? 0) as MasteryLevel;
+      const previousLevel = progress?.masteryLevel ?? MasteryLevel.New;
       const newLevel = sm2Result.nextLevel;
       const currentThresholdIndex = Math.min(previousLevel, 3);
 
@@ -169,7 +172,7 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
 
       setEngine((prev) => ({
         ...prev,
-        state: isCardCorrect ? 'correct_feedback' : 'wrong_feedback',
+        state: isCardCorrect ? QuizState.CorrectFeedback : QuizState.WrongFeedback,
         results: [...prev.results, answerResult],
         isClose: false,
       }));
@@ -188,7 +191,7 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
   );
 
   const nextCard = useCallback(() => {
-    if (engine.state === 'correct_feedback' || engine.state === 'wrong_feedback') {
+    if (engine.state === QuizState.CorrectFeedback || engine.state === QuizState.WrongFeedback) {
       if (feedbackTimerRef.current) {
         clearTimeout(feedbackTimerRef.current);
         feedbackTimerRef.current = null;
@@ -200,7 +203,7 @@ export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 's
   const useHint = useCallback(() => {
     setEngine((prev) => ({
       ...prev,
-      currentHintLevel: Math.min(prev.currentHintLevel + 1, 2),
+      currentHintLevel: Math.min(prev.currentHintLevel + 1, MAX_HINT_LEVEL) as HintLevel,
     }));
   }, []);
 

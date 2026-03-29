@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { UserSettings, DEFAULT_SETTINGS } from '../types/settings';
 import { getSettings, updateSetting } from '../db/settingsRepository';
+import { SettingsKey } from '../constants/settingsKeys';
 import { useDatabase } from './useDatabase';
 
 export function useSettings() {
@@ -18,12 +19,12 @@ export function useSettings() {
   }, [load]);
 
   const setDailyNewLimit = useCallback(async (limit: number) => {
-    await updateSetting('daily_new_limit', String(limit));
+    await updateSetting(SettingsKey.DailyNewLimit, String(limit));
     setSettings((prev) => ({ ...prev, dailyNewLimit: limit }));
   }, []);
 
   const setLatinMode = useCallback(async (enabled: boolean) => {
-    await updateSetting('latin_mode', enabled ? '1' : '0');
+    await updateSetting(SettingsKey.LatinMode, enabled ? '1' : '0');
     setSettings((prev) => ({ ...prev, latinMode: enabled }));
   }, []);
 

@@ -9,6 +9,7 @@ import { MuscleDetailScreen } from '../screens/MuscleDetailScreen';
 import { StatisticsScreen } from '../screens/StatisticsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { Colors } from '../constants/colors';
+import { Routes } from '../constants/routes';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -18,12 +19,12 @@ function HomeStackNavigator() {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
-        name="Home"
+        name={Routes.Home}
         component={HomeScreen}
         options={{ headerShown: false }}
       />
       <HomeStack.Screen
-        name="Quiz"
+        name={Routes.Quiz}
         component={QuizScreen}
         options={{ headerShown: false, gestureEnabled: false, animation: 'slide_from_bottom' }}
       />
@@ -35,12 +36,12 @@ function BrowseStackNavigator() {
   return (
     <BrowseStack.Navigator>
       <BrowseStack.Screen
-        name="BodyRegion"
+        name={Routes.BodyRegion}
         component={BodyRegionScreen}
         options={{ headerShown: false }}
       />
       <BrowseStack.Screen
-        name="MuscleDetail"
+        name={Routes.MuscleDetail}
         component={MuscleDetailScreen}
         options={{ title: '근육 상세', headerBackTitle: '뒤로' }}
       />
@@ -62,7 +63,7 @@ export function RootNavigator() {
       }}
     >
       <Tab.Screen
-        name="HomeTab"
+        name={Routes.HomeTab}
         component={HomeStackNavigator}
         options={{
           tabBarLabel: '홈',
@@ -70,7 +71,7 @@ export function RootNavigator() {
         }}
       />
       <Tab.Screen
-        name="BrowseTab"
+        name={Routes.BrowseTab}
         component={BrowseStackNavigator}
         options={{
           tabBarLabel: '탐색',
@@ -78,7 +79,7 @@ export function RootNavigator() {
         }}
       />
       <Tab.Screen
-        name="Statistics"
+        name={Routes.Statistics}
         component={StatisticsScreen}
         options={{
           tabBarLabel: '통계',
@@ -86,7 +87,7 @@ export function RootNavigator() {
         }}
       />
       <Tab.Screen
-        name="Settings"
+        name={Routes.Settings}
         component={SettingsScreen}
         options={{
           tabBarLabel: '설정',

@@ -15,6 +15,7 @@ import { MUSCLES } from '../data/muscles';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { QuizCard } from '../types/quiz';
+import { Routes } from '../constants/routes';
 
 export type HomeStackParamList = {
   Home: undefined;
@@ -48,7 +49,7 @@ export function HomeScreen() {
     if (cards.length === 0) {
       return; // No cards available
     }
-    navigation.navigate('Quiz', { cards, latinMode: settings.latinMode });
+    navigation.navigate(Routes.Quiz, { cards, latinMode: settings.latinMode });
   };
 
   const totalAvailable = dueCount + newCardsRemaining;

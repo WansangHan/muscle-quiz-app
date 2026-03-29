@@ -9,6 +9,7 @@ jest.mock('../../src/db/client', () => ({
 
 import { getDb } from '../../src/db/client';
 import { getSettings, updateSetting } from '../../src/db/settingsRepository';
+import { SettingsKey } from '../../src/constants/settingsKeys';
 
 beforeEach(async () => {
   db = new MemoryDatabase();
@@ -29,8 +30,8 @@ describe('settingsRepository', () => {
 
   describe('updateSetting + getSettings', () => {
     it('설정 변경 후 읽기', async () => {
-      await updateSetting('latin_mode', '1');
-      await updateSetting('daily_new_limit', '20');
+      await updateSetting(SettingsKey.LatinMode, '1');
+      await updateSetting(SettingsKey.DailyNewLimit, '20');
 
       const s = await getSettings();
       expect(s.latinMode).toBe(true);
@@ -38,18 +39,18 @@ describe('settingsRepository', () => {
     });
 
     it('같은 키를 덮어쓰기', async () => {
-      await updateSetting('latin_mode', '1');
-      await updateSetting('latin_mode', '0');
+      await updateSetting(SettingsKey.LatinMode, '1');
+      await updateSetting(SettingsKey.LatinMode, '0');
 
       const s = await getSettings();
       expect(s.latinMode).toBe(false);
     });
 
     it('notification 토글', async () => {
-      await updateSetting('notification_enabled', '1');
+      await updateSetting(SettingsKey.NotificationEnabled, '1');
       expect((await getSettings()).notificationEnabled).toBe(true);
 
-      await updateSetting('notification_enabled', '0');
+      await updateSetting(SettingsKey.NotificationEnabled, '0');
       expect((await getSettings()).notificationEnabled).toBe(false);
     });
   });

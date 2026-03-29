@@ -6,7 +6,7 @@ import { StreakProgress } from '../common/StreakProgress';
 import { Colors } from '../../constants/colors';
 import { MASTERY_LABELS } from '../../constants/quiz';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
-import { MasteryLevel } from '../../types/progress';
+import { MasteryLevel } from '../../constants/masteryLevel';
 
 interface Props {
   isCorrect: boolean;
@@ -86,7 +86,7 @@ export function AnswerFeedback({
       {isCorrect && !didLevelUp && (
         <View style={styles.masterySection}>
           <MasteryBadge level={newLevel} />
-          {newLevel < 4 && (
+          {newLevel < MasteryLevel.Mastered && (
             <View style={styles.streakContainer}>
               <StreakProgress
                 streak={newStreak}

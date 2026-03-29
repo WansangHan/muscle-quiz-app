@@ -1,4 +1,5 @@
-export type MasteryLevel = 0 | 1 | 2 | 3 | 4;
+import { MasteryLevel } from '../constants/masteryLevel';
+export { MasteryLevel };
 
 export interface UserProgress {
   muscleId: string;

@@ -1,3 +1,5 @@
+import { MasteryLevel } from './masteryLevel';
+
 // SM-2 간격 테이블 (일 단위)
 // INTERVALS[level][successIndex] where successIndex = min(streak, 2)
 export const MASTERY_INTERVALS: number[][] = [
@@ -21,10 +23,10 @@ export const CORRECT_ANSWER_DISPLAY_MS = 1200;
 export const DEFAULT_DAILY_NEW_LIMIT = 10;
 export const DEFAULT_QUIZ_BATCH_SIZE = 20;
 
-export const MASTERY_LABELS: Record<number, string> = {
-  0: '새카드',
-  1: '학습중',
-  2: '익숙함',
-  3: '능숙함',
-  4: '완전숙달',
+export const MASTERY_LABELS: Record<MasteryLevel, string> = {
+  [MasteryLevel.New]: '새카드',
+  [MasteryLevel.Learning]: '학습중',
+  [MasteryLevel.Familiar]: '익숙함',
+  [MasteryLevel.Proficient]: '능숙함',
+  [MasteryLevel.Mastered]: '완전숙달',
 };

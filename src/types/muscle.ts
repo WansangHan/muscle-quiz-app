@@ -1,15 +1,5 @@
-export type BodyRegion =
-  | 'chest'
-  | 'back'
-  | 'shoulder'
-  | 'arm'
-  | 'abdomen'
-  | 'glute'
-  | 'thigh_front'
-  | 'thigh_back'
-  | 'thigh_inner'
-  | 'calf'
-  | 'neck';
+import { BodyRegion } from '../constants/bodyRegion';
+export { BodyRegion };
 
 export interface MuscleNames {
   koreanCommon: string;

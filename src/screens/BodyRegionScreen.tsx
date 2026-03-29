@@ -24,6 +24,8 @@ import { getAllProgress } from '../db/progressRepository';
 import { useDatabase } from '../hooks/useDatabase';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
+import { MasteryLevel } from '../constants/masteryLevel';
+import { Routes } from '../constants/routes';
 
 if (Platform.OS === 'android') {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
@@ -94,7 +96,7 @@ export function BodyRegionScreen() {
   const getRegionMasteredCount = (muscles: MuscleData[]) => {
     return muscles.filter((m) => {
       const p = progressMap.get(m.id);
-      return p && p.masteryLevel >= 4;
+      return p && p.masteryLevel >= MasteryLevel.Mastered;
     }).length;
   };
 
@@ -138,7 +140,7 @@ export function BodyRegionScreen() {
                       <TouchableOpacity
                         key={muscle.id}
                         style={styles.muscleCard}
-                        onPress={() => navigation.navigate('MuscleDetail', { muscleId: muscle.id })}
+                        onPress={() => navigation.navigate(Routes.MuscleDetail, { muscleId: muscle.id })}
                         activeOpacity={0.7}
                       >
                         <View style={styles.thumbnailContainer}>

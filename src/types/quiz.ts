@@ -1,13 +1,7 @@
 import { MuscleData } from './muscle';
 import { MasteryLevel } from './progress';
 
-export type QuizState =
-  | 'idle'
-  | 'showing_card'
-  | 'checking'
-  | 'correct_feedback'
-  | 'wrong_feedback'
-  | 'complete';
+export { QuizState } from '../constants/quizState';
 
 export interface QuizCardMeta {
   masteryLevel: MasteryLevel;
