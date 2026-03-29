@@ -1,4 +1,5 @@
 import { MuscleData } from './muscle';
+import { MasteryLevel } from './progress';
 
 export type QuizState =
   | 'idle'
@@ -8,7 +9,12 @@ export type QuizState =
   | 'wrong_feedback'
   | 'complete';
 
-export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
+export interface QuizCardMeta {
+  masteryLevel: MasteryLevel;
+  lastReviewedAt: string | null;
+  totalReviews: number;
+  totalCorrect: number;
+}
 
 export interface QuizCard {
   muscle: MuscleData;
@@ -17,6 +23,7 @@ export interface QuizCard {
     charCount: string;
     choseong: string;
   }[];
+  meta?: QuizCardMeta;
 }
 
 export interface AnswerResult {
@@ -27,6 +34,17 @@ export interface AnswerResult {
   isClose: boolean;
   hintUsed: boolean;
   responseTimeMs: number;
+  previousLevel: MasteryLevel;
+  newLevel: MasteryLevel;
+  newStreak: number;
+  promotionThreshold: number;
+  didLevelUp: boolean;
+}
+
+export interface MasteryChange {
+  muscleName: string;
+  oldLevel: MasteryLevel;
+  newLevel: MasteryLevel;
 }
 
 export interface QuizSessionSummary {
@@ -35,4 +53,6 @@ export interface QuizSessionSummary {
   wrongCount: number;
   accuracy: number;
   duration: number;
+  levelUps: number;
+  masteryChanges: MasteryChange[];
 }

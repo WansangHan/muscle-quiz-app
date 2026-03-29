@@ -7,14 +7,15 @@ import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 interface Props {
   hintLevel: number;
   hintTexts: { charCount: string; choseong: string };
+  latinMode?: boolean;
   onPress: () => void;
 }
 
-export function HintButton({ hintLevel, hintTexts, onPress }: Props) {
+export function HintButton({ hintLevel, hintTexts, latinMode, onPress }: Props) {
   const getHintDisplay = () => {
     if (hintLevel === 0) return null;
     if (hintLevel === 1) return `글자 수: ${hintTexts.charCount}`;
-    return `초성: ${hintTexts.choseong}`;
+    return `${latinMode ? '첫 글자' : '초성'}: ${hintTexts.choseong}`;
   };
 
   const hintDisplay = getHintDisplay();
@@ -26,7 +27,7 @@ export function HintButton({ hintLevel, hintTexts, onPress }: Props) {
           <View style={styles.buttonInner}>
             <MaterialCommunityIcons name="lightbulb-outline" size={16} color={Colors.text} />
             <Text style={styles.buttonText}>
-              {hintLevel === 0 ? '힌트 보기' : '초성 힌트'}
+              {hintLevel === 0 ? '힌트 보기' : (latinMode ? '첫 글자 힌트' : '초성 힌트')}
             </Text>
           </View>
         </TouchableOpacity>

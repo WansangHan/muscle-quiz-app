@@ -24,11 +24,11 @@ function rowToProgress(row: ProgressRow): UserProgress {
     easeFactor: row.ease_factor,
     intervalDays: row.interval_days,
     nextReviewAt: row.next_review_at,
-    lastReviewedAt: row.last_reviewed_at,
-    totalReviews: row.total_reviews,
-    totalCorrect: row.total_correct,
+    lastReviewedAt: row.last_reviewed_at ?? null,
+    totalReviews: row.total_reviews ?? 0,
+    totalCorrect: row.total_correct ?? 0,
     isUnlocked: row.is_unlocked === 1,
-    updatedAt: row.updated_at,
+    updatedAt: row.updated_at ?? '',
   };
 }
 
@@ -74,6 +74,20 @@ export async function getNewCardsSeenToday(today: Date = new Date()): Promise<nu
   return row?.cnt ?? 0;
 }
 
+export async function getReviewedTodayCount(today: Date = new Date()): Promise<number> {
+  const db = await getDb();
+  const dateStr = formatDate(today);
+  const startOfDay = `${dateStr}T00:00:00`;
+  const endOfDay = `${dateStr}T23:59:59`;
+  const row = await db.getFirstAsync<{ cnt: number }>(
+    `SELECT COUNT(*) as cnt FROM user_progress
+     WHERE last_reviewed_at >= ? AND last_reviewed_at <= ?`,
+    startOfDay,
+    endOfDay,
+  );
+  return row?.cnt ?? 0;
+}
+
 export async function getUnlockedCount(): Promise<number> {
   const db = await getDb();
   const row = await db.getFirstAsync<{ cnt: number }>(
@@ -105,6 +119,30 @@ export async function unlockCards(muscleIds: string[]): Promise<void> {
       id,
     );
   }
+}
+
+export async function getMasteryDistribution(): Promise<Record<number, number>> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<ProgressRow>(
+    'SELECT * FROM user_progress WHERE is_unlocked = ?',
+    1,
+  );
+  const dist: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 };
+  for (const row of rows) {
+    dist[row.mastery_level] = (dist[row.mastery_level] ?? 0) + 1;
+  }
+  return dist;
+}
+
+export async function getNearPromotionCount(): Promise<number> {
+  const db = await getDb();
+  const rows = await db.getAllAsync<ProgressRow>(
+    'SELECT * FROM user_progress WHERE is_unlocked = ? AND mastery_level < ?',
+    1,
+    4,
+  );
+  const thresholds = [3, 5, 7, 9];
+  return rows.filter((r) => r.streak >= thresholds[r.mastery_level] - 1).length;
 }
 
 export async function upsertProgress(progress: {

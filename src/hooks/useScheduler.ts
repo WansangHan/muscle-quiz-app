@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import { QuizCard, Difficulty } from '../types/quiz';
+import { QuizCard } from '../types/quiz';
 import { MUSCLES } from '../data/muscles';
 import {
   getDueCards,
   getLockedMuscleIds,
   getNewCardsSeenToday,
+  getProgress,
+  getReviewedTodayCount,
   unlockCards,
 } from '../db/progressRepository';
 import { getSettings } from '../db/settingsRepository';
-import { extractChoseong, getCharCountHint } from '../lib/hangulUtils';
+import { extractChoseong, getCharCountHint, getInitialLettersHint } from '../lib/hangulUtils';
 import { useDatabase } from './useDatabase';
 
 function shuffle<T>(arr: T[]): T[] {
@@ -20,54 +22,51 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function buildQuizCard(muscleId: string, difficulty: Difficulty = 'beginner'): QuizCard | null {
+async function buildQuizCard(muscleId: string, latinMode: boolean = false): Promise<QuizCard | null> {
   const muscle = MUSCLES.find((m) => m.id === muscleId);
   if (!muscle) return null;
 
-  let requiredAnswers: string[];
-  switch (difficulty) {
-    case 'advanced':
-    case 'intermediate':
-      requiredAnswers = [
-        muscle.names.koreanAnatomical,
-        muscle.names.latinEnglish,
-      ];
-      break;
-    case 'beginner':
-    default:
-      requiredAnswers = [muscle.names.koreanAnatomical];
-      break;
-  }
+  const requiredAnswers = latinMode
+    ? [muscle.names.latinEnglish]
+    : [muscle.names.koreanAnatomical];
 
   const hintTexts = requiredAnswers.map((answer) => ({
     charCount: getCharCountHint(answer),
-    choseong: extractChoseong(answer),
+    choseong: latinMode ? getInitialLettersHint(answer) : extractChoseong(answer),
   }));
 
-  return { muscle, requiredAnswers, hintTexts };
+  const progress = await getProgress(muscleId);
+  const meta = progress
+    ? {
+        masteryLevel: progress.masteryLevel,
+        lastReviewedAt: progress.lastReviewedAt,
+        totalReviews: progress.totalReviews,
+        totalCorrect: progress.totalCorrect,
+      }
+    : undefined;
+
+  return { muscle, requiredAnswers, hintTexts, meta };
 }
 
 export function useScheduler() {
   const { isReady } = useDatabase();
   const [dueCount, setDueCount] = useState(0);
   const [newCardsRemaining, setNewCardsRemaining] = useState(0);
-  const [totalMastered, setTotalMastered] = useState(0);
+  const [studiedToday, setStudiedToday] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     if (!isReady) return;
     setLoading(true);
     try {
-      const [due, settings, newSeen, locked] = await Promise.all([
-        getDueCards(), getSettings(), getNewCardsSeenToday(), getLockedMuscleIds(),
+      const [due, settings, newSeen, locked, reviewed] = await Promise.all([
+        getDueCards(), getSettings(), getNewCardsSeenToday(), getLockedMuscleIds(), getReviewedTodayCount(),
       ]);
       const newRemaining = Math.max(0, settings.dailyNewLimit - newSeen);
 
       setDueCount(due.length);
       setNewCardsRemaining(Math.min(newRemaining, locked.length));
-      setTotalMastered(
-        due.filter((d) => d.masteryLevel >= 4).length,
-      );
+      setStudiedToday(reviewed);
     } catch (err) {
       console.error('Scheduler refresh error:', err);
     } finally {
@@ -92,7 +91,7 @@ export function useScheduler() {
       // 1. Due review cards first (sorted by most overdue)
       for (const progress of due) {
         if (cards.length >= maxCards) break;
-        const card = buildQuizCard(progress.muscleId, settings.difficulty);
+        const card = await buildQuizCard(progress.muscleId, settings.latinMode);
         if (card) cards.push(card);
       }
 
@@ -103,7 +102,7 @@ export function useScheduler() {
         if (toUnlock.length > 0) {
           await unlockCards(toUnlock);
           for (const muscleId of toUnlock) {
-            const card = buildQuizCard(muscleId, settings.difficulty);
+            const card = await buildQuizCard(muscleId, settings.latinMode);
             if (card) cards.push(card);
           }
         }
@@ -119,7 +118,7 @@ export function useScheduler() {
       const settings = await getSettings();
       const cards: QuizCard[] = [];
       for (const id of muscleIds) {
-        const card = buildQuizCard(id, settings.difficulty);
+        const card = await buildQuizCard(id, settings.latinMode);
         if (card) cards.push(card);
       }
       return shuffle(cards);
@@ -127,5 +126,5 @@ export function useScheduler() {
     [],
   );
 
-  return { dueCount, newCardsRemaining, totalMastered, loading, refresh, buildQuizDeck, buildCardsForMuscleIds };
+  return { dueCount, newCardsRemaining, studiedToday, loading, refresh, buildQuizDeck, buildCardsForMuscleIds };
 }

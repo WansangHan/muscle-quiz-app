@@ -1,20 +1,13 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Switch, StyleSheet } from 'react-native';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { useSettings } from '../hooks/useSettings';
-import { Difficulty } from '../types/quiz';
 import { MUSCLES } from '../data/muscles';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 
-const DIFFICULTY_OPTIONS: { key: Difficulty; label: string; desc: string }[] = [
-  { key: 'beginner', label: '초급', desc: '일반명만' },
-  { key: 'intermediate', label: '중급', desc: '일반명 + 해부학 용어' },
-  { key: 'advanced', label: '고급', desc: '3개 모두' },
-];
-
 export function SettingsScreen() {
-  const { settings, setDailyNewLimit, setDifficulty } = useSettings();
+  const { settings, setDailyNewLimit, setLatinMode } = useSettings();
 
   const handleLimitChange = (text: string) => {
     const num = parseInt(text, 10);
@@ -44,37 +37,21 @@ export function SettingsScreen() {
           />
         </View>
 
-        <View style={styles.difficultySection}>
-          <Text style={styles.label}>난이도</Text>
-          <View style={styles.difficultyRow}>
-            {DIFFICULTY_OPTIONS.map((opt) => (
-              <TouchableOpacity
-                key={opt.key}
-                style={[
-                  styles.difficultyButton,
-                  settings.difficulty === opt.key && styles.difficultyButtonActive,
-                ]}
-                onPress={() => setDifficulty(opt.key)}
-              >
-                <Text
-                  style={[
-                    styles.difficultyLabel,
-                    settings.difficulty === opt.key && styles.difficultyLabelActive,
-                  ]}
-                >
-                  {opt.label}
-                </Text>
-                <Text
-                  style={[
-                    styles.difficultyDesc,
-                    settings.difficulty === opt.key && styles.difficultyDescActive,
-                  ]}
-                >
-                  {opt.desc}
-                </Text>
-              </TouchableOpacity>
-            ))}
+        <View style={styles.row}>
+          <View style={styles.rowLabel}>
+            <Text style={styles.label}>영문/라틴 모드</Text>
+            <Text style={styles.description}>
+              {settings.latinMode
+                ? '영문/라틴명으로 답하기'
+                : '한국어 해부학명으로 답하기'}
+            </Text>
           </View>
+          <Switch
+            value={settings.latinMode}
+            onValueChange={setLatinMode}
+            trackColor={{ false: Colors.border, true: Colors.primary }}
+            thumbColor="#fff"
+          />
         </View>
       </View>
 
@@ -151,42 +128,5 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     textAlign: 'center',
     backgroundColor: Colors.background,
-  },
-  difficultySection: {
-    paddingVertical: Spacing.sm,
-  },
-  difficultyRow: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
-  },
-  difficultyButton: {
-    flex: 1,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    borderWidth: 2,
-    borderColor: Colors.border,
-    alignItems: 'center',
-  },
-  difficultyButtonActive: {
-    borderColor: Colors.primary,
-    backgroundColor: '#EBF3FC',
-  },
-  difficultyLabel: {
-    fontSize: FontSize.sm,
-    fontWeight: '700',
-    color: Colors.textSecondary,
-  },
-  difficultyLabelActive: {
-    color: Colors.primary,
-  },
-  difficultyDesc: {
-    fontSize: FontSize.xs,
-    color: Colors.textLight,
-    marginTop: 2,
-  },
-  difficultyDescActive: {
-    color: Colors.primaryDark,
   },
 });

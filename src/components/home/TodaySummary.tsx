@@ -1,18 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { MUSCLES } from '../../data/muscles';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 
 interface Props {
   dueCount: number;
   newCardsRemaining: number;
-  totalMastered: number;
+  studiedToday: number;
+  nearPromotion?: number;
 }
 
-export function TodaySummary({ dueCount, newCardsRemaining, totalMastered }: Props) {
-  const totalMuscles = MUSCLES.length;
-  const progressPct = totalMuscles > 0 ? totalMastered / totalMuscles : 0;
+export function TodaySummary({ dueCount, newCardsRemaining, studiedToday, nearPromotion = 0 }: Props) {
+  const todayTotal = studiedToday + dueCount + newCardsRemaining;
+  const progressPct = todayTotal > 0 ? studiedToday / todayTotal : 0;
 
   return (
     <View style={styles.container}>
@@ -20,17 +20,22 @@ export function TodaySummary({ dueCount, newCardsRemaining, totalMastered }: Pro
       <View style={styles.statsRow}>
         <StatBox label="복습 대기" value={dueCount} color={Colors.accent} />
         <StatBox label="새 카드" value={newCardsRemaining} color={Colors.primary} />
-        <StatBox label="숙달 완료" value={totalMastered} color={Colors.success} />
+        {nearPromotion > 0 && (
+          <StatBox label="레벨업 직전" value={nearPromotion} color={Colors.success} />
+        )}
       </View>
 
       <View style={styles.progressSection}>
         <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>전체 진행률</Text>
-          <Text style={styles.progressValue}>{totalMastered} / {totalMuscles}</Text>
+          <Text style={styles.progressLabel}>오늘 진행률</Text>
+          <Text style={styles.progressValue}>{studiedToday} / {todayTotal} 완료</Text>
         </View>
         <View style={styles.progressTrack}>
           <View style={[styles.progressFill, { width: `${progressPct * 100}%` }]} />
         </View>
+        <Text style={styles.progressBreakdown}>
+          학습 완료 {studiedToday} + 복습 대기 {dueCount} + 새 카드 {newCardsRemaining}
+        </Text>
       </View>
     </View>
   );
@@ -105,9 +110,15 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     overflow: 'hidden',
   },
+  progressBreakdown: {
+    fontSize: FontSize.xs,
+    color: Colors.textLight,
+    marginTop: Spacing.xs,
+    textAlign: 'right',
+  },
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.success,
+    backgroundColor: Colors.primary,
     borderRadius: 3,
   },
 });

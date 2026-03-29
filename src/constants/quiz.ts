@@ -20,3 +20,11 @@ export const CORRECT_ANSWER_DISPLAY_MS = 1200;
 
 export const DEFAULT_DAILY_NEW_LIMIT = 10;
 export const DEFAULT_QUIZ_BATCH_SIZE = 20;
+
+export const MASTERY_LABELS: Record<number, string> = {
+  0: '새카드',
+  1: '학습중',
+  2: '익숙함',
+  3: '능숙함',
+  4: '완전숙달',
+};

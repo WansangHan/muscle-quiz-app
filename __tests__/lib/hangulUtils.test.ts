@@ -1,4 +1,4 @@
-import { extractChoseong, getCharCount, getCharCountHint } from '../../src/lib/hangulUtils';
+import { extractChoseong, getCharCount, getCharCountHint, getInitialLettersHint } from '../../src/lib/hangulUtils';
 
 describe('hangulUtils', () => {
   describe('extractChoseong', () => {
@@ -37,6 +37,21 @@ describe('hangulUtils', () => {
     it('글자 위치를 언더스코어로 표시', () => {
       expect(getCharCountHint('대흉근')).toBe('___');
       expect(getCharCountHint('큰 가슴근')).toBe('_ ___');
+    });
+  });
+
+  describe('getInitialLettersHint', () => {
+    it('각 단어의 첫 글자만 보여주고 나머지는 밑줄', () => {
+      expect(getInitialLettersHint('Pectoralis Major')).toBe('P_________ M____');
+      expect(getInitialLettersHint('Biceps Brachii')).toBe('B_____ B______');
+    });
+
+    it('단일 단어 처리', () => {
+      expect(getInitialLettersHint('Deltoid')).toBe('D______');
+    });
+
+    it('빈 문자열 처리', () => {
+      expect(getInitialLettersHint('')).toBe('');
     });
   });
 });

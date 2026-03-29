@@ -75,7 +75,7 @@ export class MemoryDatabase {
       return { lastInsertRowId: row['id'] as number, changes: 1 };
     }
 
-    const updateMatch = sql.match(/UPDATE\s+(\w+)\s+SET\s+(.+?)\s+WHERE\s+(.+)/i);
+    const updateMatch = sql.match(/UPDATE\s+(\w+)\s+SET\s+(.+?)\s+WHERE\s+(.+)/is);
     if (updateMatch) {
       const table = updateMatch[1];
       const rows = this.tables.get(table) ?? [];
@@ -103,12 +103,32 @@ export class MemoryDatabase {
             row[col] = ((row[col] as number) ?? 0) + (params[paramIdx++] as number ?? 0);
           } else if (val.includes("datetime('now')")) {
             row[col] = new Date().toISOString();
+          } else {
+            // Literal value (e.g., is_unlocked = 1)
+            const cleaned = val.replace(/'/g, '').trim();
+            const asNum = Number(cleaned);
+            row[col] = !isNaN(asNum) && cleaned !== '' ? asNum : cleaned;
           }
         }
         changes++;
       }
 
       return { lastInsertRowId: 0, changes };
+    }
+
+    const deleteMatch = sql.match(/DELETE\s+FROM\s+(\w+)(?:\s+WHERE\s+(.+))?/is);
+    if (deleteMatch) {
+      const table = deleteMatch[1];
+      const rows = this.tables.get(table) ?? [];
+      if (!deleteMatch[2]) {
+        const changes = rows.length;
+        this.tables.set(table, []);
+        return { lastInsertRowId: 0, changes };
+      }
+      const filtered = this.filterRows(rows, deleteMatch[2], params);
+      const remaining = rows.filter((r) => !filtered.includes(r));
+      this.tables.set(table, remaining);
+      return { lastInsertRowId: 0, changes: rows.length - remaining.length };
     }
 
     return { lastInsertRowId: 0, changes: 0 };
@@ -134,10 +154,8 @@ export class MemoryDatabase {
     if (selectMatch) {
       const table = selectMatch[1];
       const rows = this.tables.get(table) ?? [];
-      if (selectMatch[2]) {
-        return this.filterRows(rows, selectMatch[2], params) as unknown as T[];
-      }
-      return [...rows] as unknown as T[];
+      const filtered = selectMatch[2] ? this.filterRows(rows, selectMatch[2], params) : [...rows];
+      return this.applyOrderBy(filtered, sql) as unknown as T[];
     }
 
     // Parse SELECT specific columns
@@ -147,7 +165,8 @@ export class MemoryDatabase {
       const table = selectColMatch[2];
       const rows = this.tables.get(table) ?? [];
       const filtered = selectColMatch[3] ? this.filterRows(rows, selectColMatch[3], params) : rows;
-      return filtered.map((r) => ({ [col]: r[col] })) as unknown as T[];
+      const sorted = this.applyOrderBy(filtered, sql);
+      return sorted.map((r) => ({ [col]: r[col] })) as unknown as T[];
     }
 
     // SELECT key, value FROM table
@@ -160,6 +179,20 @@ export class MemoryDatabase {
     return [];
   }
 
+  private applyOrderBy(rows: Row[], sql: string): Row[] {
+    const orderMatch = sql.match(/ORDER\s+BY\s+(\w+)(?:\s+(ASC|DESC))?/i);
+    if (!orderMatch) return rows;
+    const col = orderMatch[1];
+    const desc = (orderMatch[2] ?? 'ASC').toUpperCase() === 'DESC';
+    return [...rows].sort((a, b) => {
+      const va = a[col] ?? '';
+      const vb = b[col] ?? '';
+      if (va < vb) return desc ? 1 : -1;
+      if (va > vb) return desc ? -1 : 1;
+      return 0;
+    });
+  }
+
   private filterRows(rows: Row[], whereClause: string, params: (string | number | null)[]): Row[] {
     // Handle multiple AND conditions
     const conditions = whereClause.split(/\s+AND\s+/i);
@@ -167,17 +200,27 @@ export class MemoryDatabase {
     let result = [...rows];
 
     for (const condition of conditions) {
-      const eqMatch = condition.trim().match(/(\w+)\s*(=|<=|>=)\s*\??/);
+      const eqMatch = condition.trim().match(/(\w+)\s*(<=|>=|<|>|=)\s*(.*)/);
       if (!eqMatch) continue;
       const col = eqMatch[1];
       const op = eqMatch[2];
-      const val = condition.includes('?') ? params[paramIdx++] : null;
+      const rhs = eqMatch[3].trim();
+      let val: string | number | null;
+      if (rhs === '?') {
+        val = params[paramIdx++] ?? null;
+      } else {
+        const cleaned = rhs.replace(/'/g, '');
+        const asNum = Number(cleaned);
+        val = !isNaN(asNum) && cleaned !== '' ? asNum : cleaned;
+      }
 
       result = result.filter((row) => {
         // eslint-disable-next-line eqeqeq
         if (op === '=') return row[col] == val;
         if (op === '<=') return (row[col] ?? '') <= (val ?? '');
         if (op === '>=') return (row[col] ?? '') >= (val ?? '');
+        if (op === '<') return (row[col] ?? '') < (val ?? '');
+        if (op === '>') return (row[col] ?? '') > (val ?? '');
         return true;
       });
     }

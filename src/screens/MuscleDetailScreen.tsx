@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, Linking, Pressable } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ImageZoomModal } from '../components/common/ImageZoomModal';
+import { MasteryBadge } from '../components/common/MasteryBadge';
+import { StreakProgress } from '../components/common/StreakProgress';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { MUSCLES, BODY_REGION_LABELS } from '../data/muscles';
 import { Colors } from '../constants/colors';
+import { PROMOTION_THRESHOLDS } from '../constants/quiz';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 import { BrowseStackParamList } from './BodyRegionScreen';
+import { UserProgress } from '../types/progress';
+import { getProgress } from '../db/progressRepository';
+import { useDatabase } from '../hooks/useDatabase';
 import attributionsData from '../../assets/images/muscles/_attributions.json';
 
 export function MuscleDetailScreen() {
@@ -26,6 +32,15 @@ export function MuscleDetailScreen() {
   }
 
   const [zoomVisible, setZoomVisible] = useState(false);
+  const { isReady } = useDatabase();
+  const [progress, setProgress] = useState<UserProgress | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!isReady || !muscle) return;
+      getProgress(muscle.id).then(setProgress);
+    }, [isReady, muscle]),
+  );
 
   const relatedMuscles = muscle.relatedMuscles
     .map((id) => MUSCLES.find((m) => m.id === id))
@@ -67,6 +82,40 @@ export function MuscleDetailScreen() {
           <NameRow label="근육명" value={muscle.names.koreanAnatomical} />
           <NameRow label="현대 해부학 용어" value={muscle.names.koreanCommon} />
           <NameRow label="영문/라틴" value={muscle.names.latinEnglish} />
+        </View>
+
+        <View style={styles.progressCard}>
+          <Text style={styles.progressTitle}>학습 진도</Text>
+          {progress && progress.isUnlocked ? (
+            <View>
+              <View style={styles.progressHeader}>
+                <MasteryBadge level={progress.masteryLevel} size="md" />
+                <Text style={styles.progressStats}>
+                  총 {progress.totalReviews}회 학습 · 정답률{' '}
+                  {progress.totalReviews > 0
+                    ? Math.round((progress.totalCorrect / progress.totalReviews) * 100)
+                    : 0}%
+                </Text>
+              </View>
+              {progress.masteryLevel < 4 && (
+                <View style={styles.streakContainer}>
+                  <StreakProgress
+                    streak={progress.streak}
+                    threshold={PROMOTION_THRESHOLDS[Math.min(progress.masteryLevel, 3)]}
+                    level={progress.masteryLevel}
+                  />
+                </View>
+              )}
+              <Text style={styles.nextReview}>
+                다음 복습:{' '}
+                {new Date(progress.nextReviewAt) <= new Date()
+                  ? '복습 대기 중'
+                  : formatRelativeDate(progress.nextReviewAt)}
+              </Text>
+            </View>
+          ) : (
+            <Text style={styles.notStarted}>아직 학습하지 않은 근육입니다</Text>
+          )}
         </View>
 
         <View style={styles.infoCard}>
@@ -113,6 +162,17 @@ export function MuscleDetailScreen() {
       </ScrollView>
     </ScreenWrapper>
   );
+}
+
+function formatRelativeDate(isoDate: string): string {
+  const diff = new Date(isoDate).getTime() - Date.now();
+  const hours = Math.round(diff / (1000 * 60 * 60));
+  if (hours < 1) return '곧';
+  if (hours < 24) return `${hours}시간 후`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}일 후`;
+  if (days < 30) return `${Math.round(days / 7)}주 후`;
+  return `${Math.round(days / 30)}개월 후`;
 }
 
 function NameRow({ label, value }: { label: string; value: string }) {
@@ -257,5 +317,40 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     color: Colors.text,
     paddingVertical: Spacing.xs,
+  },
+  progressCard: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  progressTitle: {
+    fontSize: FontSize.md,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.sm,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  progressStats: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    flex: 1,
+  },
+  streakContainer: {
+    marginTop: Spacing.md,
+  },
+  nextReview: {
+    fontSize: FontSize.sm,
+    color: Colors.textSecondary,
+    marginTop: Spacing.sm,
+  },
+  notStarted: {
+    fontSize: FontSize.sm,
+    color: Colors.textLight,
+    fontStyle: 'italic',
   },
 });

@@ -73,6 +73,22 @@ const migrations: Migration[] = [
       );
     `);
   },
+  // Version 2: Migrate difficulty setting to latinMode
+  async (db) => {
+    const row = await db.getFirstAsync<{ value: string }>(
+      "SELECT value FROM user_settings WHERE key = 'difficulty'"
+    );
+    if (row) {
+      const latinMode = (row.value === 'intermediate' || row.value === 'advanced') ? '1' : '0';
+      await db.runAsync(
+        "INSERT OR REPLACE INTO user_settings (key, value) VALUES ('latin_mode', ?)",
+        latinMode
+      );
+      await db.runAsync(
+        "DELETE FROM user_settings WHERE key = 'difficulty'"
+      );
+    }
+  },
 ];
 
 export async function runMigrations(db: Database): Promise<void> {

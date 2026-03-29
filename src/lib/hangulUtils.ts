@@ -32,3 +32,10 @@ export function getCharCountHint(str: string): string {
     .map((char) => (char === ' ' ? ' ' : '_'))
     .join('');
 }
+
+export function getInitialLettersHint(str: string): string {
+  return str
+    .split(/\s+/)
+    .map((w) => (w.length > 0 ? w[0] + '_'.repeat(w.length - 1) : ''))
+    .join(' ');
+}

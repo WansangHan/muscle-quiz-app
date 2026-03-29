@@ -3,11 +3,10 @@ import { View, Text, Image, TextInput, Animated, StyleSheet } from 'react-native
 import { QuizCard as QuizCardType } from '../../types/quiz';
 import { PressableScale } from '../common/PressableScale';
 import { HintButton } from './HintButton';
+import { QuizCardMetaBar } from './QuizCardMeta';
 import { Colors } from '../../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../../constants/spacing';
 import { BODY_REGION_LABELS } from '../../data/muscles';
-
-const ANSWER_LABELS = ['근육명', '영문/라틴'];
 
 interface Props {
   card: QuizCardType;
@@ -15,11 +14,12 @@ interface Props {
   isClose: boolean;
   answerIndex: number;
   totalAnswers: number;
+  latinMode?: boolean;
   onSubmit: (answer: string) => void;
   onHint: () => void;
 }
 
-export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, totalAnswers, onSubmit, onHint }: Props) {
+export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, totalAnswers, latinMode, onSubmit, onHint }: Props) {
   const [input, setInput] = useState('');
   const inputRef = useRef<TextInput>(null);
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -59,10 +59,12 @@ export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, total
         </Text>
       </View>
 
+      {card.meta && (
+        <QuizCardMetaBar difficulty={card.muscle.difficulty} meta={card.meta} />
+      )}
+
       <Text style={styles.prompt}>
-        {totalAnswers > 1
-          ? `${ANSWER_LABELS[answerIndex]}을 입력하세요 (${answerIndex + 1}/${totalAnswers})`
-          : '이 근육의 이름은?'}
+        {latinMode ? 'What is the name of this muscle?' : '이 근육의 이름은?'}
       </Text>
 
       {isClose && (
@@ -75,7 +77,7 @@ export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, total
           style={[styles.input, isClose && styles.inputClose]}
           value={input}
           onChangeText={setInput}
-          placeholder="근육 이름을 입력하세요"
+          placeholder={latinMode ? 'Enter muscle name' : '근육 이름을 입력하세요'}
           placeholderTextColor={Colors.textLight}
           autoCapitalize="none"
           autoCorrect={false}
@@ -91,6 +93,7 @@ export function QuizCardComponent({ card, hintLevel, isClose, answerIndex, total
       <HintButton
         hintLevel={hintLevel}
         hintTexts={card.hintTexts[answerIndex] ?? card.hintTexts[0]}
+        latinMode={latinMode}
         onPress={onHint}
       />
     </View>

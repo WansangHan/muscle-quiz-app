@@ -41,8 +41,8 @@ export async function seedDatabase(db: Database): Promise<void> {
 
     const settings = DEFAULT_SETTINGS;
     await db.runAsync(
-      "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('difficulty', ?)",
-      settings.difficulty,
+      "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('latin_mode', ?)",
+      settings.latinMode ? '1' : '0',
     );
     await db.runAsync(
       "INSERT OR IGNORE INTO user_settings (key, value) VALUES ('daily_new_limit', ?)",

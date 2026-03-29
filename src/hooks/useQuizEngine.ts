@@ -6,7 +6,8 @@ import { toISOString } from '../lib/dateUtils';
 import { getProgress, upsertProgress } from '../db/progressRepository';
 import { createSession, finishSession, saveAnswer } from '../db/sessionRepository';
 import { incrementDailyStats } from '../db/streakRepository';
-import { WRONG_ANSWER_DISPLAY_MS, CORRECT_ANSWER_DISPLAY_MS } from '../constants/quiz';
+import { WRONG_ANSWER_DISPLAY_MS, CORRECT_ANSWER_DISPLAY_MS, PROMOTION_THRESHOLDS } from '../constants/quiz';
+import { MasteryLevel } from '../types/progress';
 
 interface QuizEngineState {
   state: QuizState;
@@ -18,7 +19,7 @@ interface QuizEngineState {
   isClose: boolean;
 }
 
-export function useQuizEngine(initialCards: QuizCard[]) {
+export function useQuizEngine(initialCards: QuizCard[], sessionMode: string = 'standard') {
   const [engine, setEngine] = useState<QuizEngineState>({
     state: initialCards.length > 0 ? 'showing_card' : 'complete',
     currentIndex: 0,
@@ -37,7 +38,7 @@ export function useQuizEngine(initialCards: QuizCard[]) {
   // Init session in effect, not during render
   useEffect(() => {
     if (sessionIdRef.current === null && initialCards.length > 0) {
-      createSession('beginner').then((id) => {
+      createSession(sessionMode).then((id) => {
         sessionIdRef.current = id;
       });
     }
@@ -147,6 +148,10 @@ export function useQuizEngine(initialCards: QuizCard[]) {
         incrementDailyStats(new Date(), isCardCorrect, progress?.totalReviews === 0),
       ]);
 
+      const previousLevel = (progress?.masteryLevel ?? 0) as MasteryLevel;
+      const newLevel = sm2Result.nextLevel;
+      const currentThresholdIndex = Math.min(previousLevel, 3);
+
       const answerResult: AnswerResult = {
         muscleId: currentCard.muscle.id,
         userAnswer: userInput,
@@ -155,6 +160,11 @@ export function useQuizEngine(initialCards: QuizCard[]) {
         isClose: false,
         hintUsed: engine.currentHintLevel > 0,
         responseTimeMs,
+        previousLevel,
+        newLevel,
+        newStreak: sm2Result.nextStreak,
+        promotionThreshold: PROMOTION_THRESHOLDS[currentThresholdIndex],
+        didLevelUp: newLevel > previousLevel,
       };
 
       setEngine((prev) => ({
@@ -196,14 +206,24 @@ export function useQuizEngine(initialCards: QuizCard[]) {
 
   const getSummary = useCallback((): QuizSessionSummary => {
     const correctCount = engine.results.filter((r) => r.isCorrect).length;
+    const muscleMap = new Map(engine.cards.map((c) => [c.muscle.id, c.muscle]));
+    const masteryChanges = engine.results
+      .filter((r) => r.didLevelUp)
+      .map((r) => ({
+        muscleName: muscleMap.get(r.muscleId)?.names.koreanCommon ?? r.muscleId,
+        oldLevel: r.previousLevel,
+        newLevel: r.newLevel,
+      }));
     return {
       totalCards: engine.results.length,
       correctCount,
       wrongCount: engine.results.length - correctCount,
       accuracy: engine.results.length > 0 ? correctCount / engine.results.length : 0,
       duration: 0,
+      levelUps: masteryChanges.length,
+      masteryChanges,
     };
-  }, [engine.results]);
+  }, [engine.results, engine.cards]);
 
   const wrongMuscleIds = engine.results
     .filter((r) => !r.isCorrect)

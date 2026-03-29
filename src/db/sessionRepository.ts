@@ -1,13 +1,12 @@
 import { getDb } from './client';
-import { Difficulty } from '../types/quiz';
 import { toISOString } from '../lib/dateUtils';
 
-export async function createSession(difficulty: Difficulty): Promise<number> {
+export async function createSession(mode: string): Promise<number> {
   const db = await getDb();
   const result = await db.runAsync(
     'INSERT INTO quiz_sessions (started_at, difficulty) VALUES (?, ?)',
     toISOString(new Date()),
-    difficulty,
+    mode,
   );
   return result.lastInsertRowId;
 }

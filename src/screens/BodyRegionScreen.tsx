@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,13 +11,17 @@ import {
   Platform,
   Animated,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenWrapper } from '../components/common/ScreenWrapper';
 import { AnimatedListItem } from '../components/common/AnimatedListItem';
+import { MasteryBadge } from '../components/common/MasteryBadge';
 import { MUSCLES, BODY_REGION_LABELS } from '../data/muscles';
 import { BodyRegion, MuscleData } from '../types/muscle';
+import { UserProgress } from '../types/progress';
+import { getAllProgress } from '../db/progressRepository';
+import { useDatabase } from '../hooks/useDatabase';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
 
@@ -74,7 +78,25 @@ function ChevronIcon({ expanded }: { expanded: boolean }) {
 
 export function BodyRegionScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<BrowseStackParamList>>();
+  const { isReady } = useDatabase();
   const [expandedRegion, setExpandedRegion] = useState<BodyRegion | null>(null);
+  const [progressMap, setProgressMap] = useState<Map<string, UserProgress>>(new Map());
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!isReady) return;
+      getAllProgress().then((rows) => {
+        setProgressMap(new Map(rows.map((p) => [p.muscleId, p])));
+      });
+    }, [isReady]),
+  );
+
+  const getRegionMasteredCount = (muscles: MuscleData[]) => {
+    return muscles.filter((m) => {
+      const p = progressMap.get(m.id);
+      return p && p.masteryLevel >= 4;
+    }).length;
+  };
 
   const handleToggle = (region: BodyRegion) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -103,7 +125,9 @@ export function BodyRegionScreen() {
                   />
                   <View style={styles.cardContent}>
                     <Text style={styles.cardLabel}>{item.label}</Text>
-                    <Text style={styles.cardCount}>{item.muscles.length}개 근육</Text>
+                    <Text style={styles.cardCount}>
+                      {item.muscles.length}개 근육 · 숙달 {getRegionMasteredCount(item.muscles)}/{item.muscles.length}
+                    </Text>
                   </View>
                   <ChevronIcon expanded={isExpanded} />
                 </TouchableOpacity>
@@ -125,10 +149,17 @@ export function BodyRegionScreen() {
                           />
                         </View>
                         <View style={styles.muscleCardContent}>
-                          <Text style={styles.namePrimary}>{muscle.names.koreanAnatomical}</Text>
-                          <Text style={styles.nameSecondary}>{muscle.names.koreanCommon}</Text>
+                          <Text style={styles.namePrimary}>{muscle.names.koreanAnatomical}({muscle.names.koreanCommon})</Text>
                           <Text style={styles.nameLatin}>{muscle.names.latinEnglish}</Text>
                         </View>
+                        {progressMap.get(muscle.id)?.isUnlocked ? (
+                          <MasteryBadge level={progressMap.get(muscle.id)!.masteryLevel} />
+                        ) : (
+                          <View style={styles.lockedBadge}>
+                            <Ionicons name="lock-closed" size={10} color={Colors.textLight} />
+                            <Text style={styles.lockedText}>미학습</Text>
+                          </View>
+                        )}
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -243,5 +274,18 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontStyle: 'italic',
     marginTop: Spacing.xs,
+  },
+  lockedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.border,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.round,
+  },
+  lockedText: {
+    fontSize: FontSize.xs,
+    color: Colors.textLight,
+    marginLeft: 4,
   },
 });

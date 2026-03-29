@@ -8,6 +8,7 @@ import { ProgressBar } from '../components/quiz/ProgressBar';
 import { QuizCardComponent } from '../components/quiz/QuizCard';
 import { AnswerFeedback } from '../components/quiz/AnswerFeedback';
 import { useQuizEngine } from '../hooks/useQuizEngine';
+import { MasteryBadge } from '../components/common/MasteryBadge';
 import { WRONG_ANSWER_DISPLAY_MS } from '../constants/quiz';
 import { Colors } from '../constants/colors';
 import { Spacing, FontSize, BorderRadius } from '../constants/spacing';
@@ -57,9 +58,9 @@ const countdownStyles = StyleSheet.create({
 export function QuizScreen() {
   const route = useRoute<RouteProp<HomeStackParamList, 'Quiz'>>();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const { cards } = route.params;
+  const { cards, latinMode } = route.params;
 
-  const engine = useQuizEngine(cards);
+  const engine = useQuizEngine(cards, latinMode ? 'latin' : 'standard');
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const prevIndexRef = useRef(0);
@@ -110,6 +111,24 @@ export function QuizScreen() {
             />
           </View>
 
+          {summary.levelUps > 0 && (
+            <View style={styles.levelUpCard}>
+              <Text style={styles.levelUpHeader}>레벨업 {summary.levelUps}건</Text>
+              {summary.masteryChanges.map((change, i) => (
+                <View key={i} style={styles.levelUpRow}>
+                  <Text style={styles.levelUpMuscleName} numberOfLines={1}>
+                    {change.muscleName}
+                  </Text>
+                  <View style={styles.levelUpChange}>
+                    <MasteryBadge level={change.oldLevel} />
+                    <Ionicons name="arrow-forward" size={12} color={Colors.textSecondary} style={{ marginHorizontal: 4 }} />
+                    <MasteryBadge level={change.newLevel} />
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
           {summary.wrongCount > 0 && (
             <PressableScale
               style={styles.retryButton}
@@ -118,7 +137,7 @@ export function QuizScreen() {
                   engine.wrongMuscleIds.includes(c.muscle.id)
                 );
                 if (wrongCards.length > 0) {
-                  navigation.replace('Quiz', { cards: wrongCards });
+                  navigation.replace('Quiz', { cards: wrongCards, latinMode });
                 }
               }}
             >
@@ -163,6 +182,11 @@ export function QuizScreen() {
               isCorrect={engine.state === 'correct_feedback'}
               correctAnswer={engine.currentCard.requiredAnswers.join(' / ')}
               userAnswer={engine.results[engine.results.length - 1]?.userAnswer ?? ''}
+              previousLevel={engine.results[engine.results.length - 1]?.previousLevel ?? 0}
+              newLevel={engine.results[engine.results.length - 1]?.newLevel ?? 0}
+              newStreak={engine.results[engine.results.length - 1]?.newStreak ?? 0}
+              promotionThreshold={engine.results[engine.results.length - 1]?.promotionThreshold ?? 3}
+              didLevelUp={engine.results[engine.results.length - 1]?.didLevelUp ?? false}
             />
             <PressableScale style={styles.nextButton} onPress={engine.nextCard}>
               <Text style={styles.nextButtonText}>
@@ -180,6 +204,7 @@ export function QuizScreen() {
               hintLevel={engine.hintLevel}
               answerIndex={engine.currentAnswerIndex}
               totalAnswers={engine.totalAnswersForCard}
+              latinMode={latinMode}
               isClose={engine.isClose}
               onSubmit={engine.submitAnswer}
               onHint={engine.useHint}
@@ -317,5 +342,36 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: FontSize.md,
     fontWeight: '600',
+  },
+  levelUpCard: {
+    width: '100%',
+    backgroundColor: Colors.accent + '0F',
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.xl,
+    borderWidth: 1,
+    borderColor: Colors.accent + '33',
+  },
+  levelUpHeader: {
+    fontSize: FontSize.md,
+    fontWeight: '700',
+    color: Colors.accent,
+    marginBottom: Spacing.sm,
+  },
+  levelUpRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.xs,
+  },
+  levelUpMuscleName: {
+    flex: 1,
+    fontSize: FontSize.sm,
+    color: Colors.text,
+    marginRight: Spacing.sm,
+  },
+  levelUpChange: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
